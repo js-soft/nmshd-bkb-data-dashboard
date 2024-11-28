@@ -13,6 +13,13 @@ font_family = "Work Sans"
 
 client_type_colmap = dict(zip(client_types(), px.colors.qualitative.D3))
 
+default_color_seq = [
+    "#479B55",
+    "#a00808",
+    "#8eb600",
+    "#01ccbb",
+    "#004849",
+]
 
 # Used to abbreviate and pretty print pd.Timestamps.
 time_unit_abbreviations = {
@@ -484,6 +491,7 @@ def sync_errors(df: pd.DataFrame) -> go.Figure:
         category_orders={
             "ErrorCode": df["ErrorCode"].cat.categories,
         },
+        color_discrete_sequence=default_color_seq,
     )
     p.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
@@ -514,6 +522,7 @@ def relationship_status_distribution(df: pd.DataFrame) -> go.Figure:
         category_orders={
             "Status": df["Status"].cat.categories,
         },
+        color_discrete_sequence=default_color_seq,
     )
     p.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
@@ -560,6 +569,7 @@ def relationship_duration_pending(df: pd.DataFrame) -> go.Figure:
         category_orders={
             "DurationBucket": df["DurationBucket"].cat.categories,
         },
+        color_discrete_sequence=default_color_seq,
     )
 
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
