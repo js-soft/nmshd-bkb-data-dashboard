@@ -1,0 +1,10 @@
+/.venv/
+/.autoenv.zsh
+/.env
+/.vscode
+__pycache__/
+/data
+/.$*.bkp
+/poetry.lock
+/forcegraph/forcegraph-data.js
+/.python-version

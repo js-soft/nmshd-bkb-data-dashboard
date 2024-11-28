@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <script src="/static/force-graph.1.44.1.min.js"></script>
+
+    <!-- Explicitly embed stylesheet here, since the forcegraph is loaded
+    inside as an IFrame. Also, make sure to load it after force-graph.js, to
+    override the CSS rules declared therein. -->
+    <link type="text/css" rel="Stylesheet" href="/assets/styles.css" />
+  </head>
+
+  <body>
+    <div id="graph"></div>
+    <!-- We bring our own statically placed element to display hover information.
+    The built-in hover information follows the cursor and thus obscures the view of the network. -->
+    <div id="forcegraph-hoverinfo" style="visibility: hidden">
+      <div id="forcegraph-hoverinfo-content"></div>
+      <div id="forcegraph-hoverinfo-copy-info-text" style="display: none">
+        Copied information to clipboard.
+      </div>
+    </div>
+    <script>
+      function generateTable(tableData, tableTitle) {
+        let text = "<h1>" + tableTitle + "</h1><table>";
+        for (const [key, val] of Object.entries(tableData)) {
+            text += "<tr><th>" + key + "</th><td>" + val + "</td></tr>";
+        }
+        text += "</table>";
+        return text;
+      }
+
+      function getNodeInfo(node) {
+        return {
+          "Address": node.Address,
+          "ClientId": node.ClientId,
+          "ClientType": node.ClientType,
+          "NumPeers": node.NumPeers
+        };
+      }
+
+      function getLinkInfo(link) {
+        return {
+          "Peer1Address": link.source.Address,
+          "Peer1ClientId": link.source.ClientId,
+          "Peer1ClientType": link.source.ClientType,
+          "Peer2Address": link.target.Address,
+          "Peer2ClientId": link.target.ClientId,
+          "Peer2ClientType": link.target.ClientType,
+          "NumMessages": link.NumMessages
+        };
+      }
+
+      function makeNodeLabel(node) {
+        return generateTable(getNodeInfo(node), "Peer Information");
+      }
+
+      function makeLinkLabel(link) {
+        return generateTable(getLinkInfo(link), "Relationship Information");
+      }
+
+      function flatObjectToCsv(obj) {
+        let header = "";
+        let row = "";
+
+        for (const [key, val] of Object.entries(obj)) {
+          header += key + ",";
+          row += val + ",";
+        }
+        return header.slice(0, -1) + "\n" + row.slice(0, -1);
+      }
+
+      function onNodeClick(node, _event) {
+        navigator.clipboard.writeText(flatObjectToCsv(getNodeInfo(node)));
+        gHoverinfoCopyInfoText.style.display = "block"
+        clearTimeout(gHideCopyInfoTextTimer)
+        gHideCopyInfoTextTimer = setTimeout(() => gHoverinfoCopyInfoText.style.display = "none", 2000)
+      }
+
+      function onLinkClick(link, _event) {
+        navigator.clipboard.writeText(flatObjectToCsv(getLinkInfo(link)));
+        gHoverinfoCopyInfoText.style.display = "block"
+        clearTimeout(gHideCopyInfoTextTimer)
+        gHideCopyInfoTextTimer = setTimeout(() => gHoverinfoCopyInfoText.style.display = "none", 2000)
+      }
+
+      function onNodeHover(node) {
+        highlightNodes.clear();
+        highlightLinks.clear();
+
+        if (node) {
+          highlightNodes.add(node.Address);
+          node.Peers.forEach(peer => {
+            highlightNodes.add(peer);
+            highlightLinks.add(node.Address + "_" + peer);
+            highlightLinks.add(peer + "_" + node.Address)
+          });
+
+          gHoverinfoContent.innerHTML = makeNodeLabel(node);
+          gHoverinfo.style.visibility = "visible";
+        } else {
+          gHoverinfo.style.visibility = "hidden";
+          clearTimeout(gHideCopyInfoTextTimer)
+          gHoverinfoCopyInfoText.style.display = "none"
+        }
+      }
+
+      function onLinkHover(link) {
+        highlightNodes.clear();
+        highlightLinks.clear();
+
+        if (link) {
+          highlightLinks.add(link.source.Address + "_" + link.target.Address);
+          highlightLinks.add(link.target.Address + "_" + link.source.Address);
+          highlightNodes.add(link.source.Address);
+          highlightNodes.add(link.target.Address);
+
+          gHoverinfoContent.innerHTML = makeLinkLabel(link);
+          gHoverinfo.style.visibility = "visible";
+        } else {
+          gHoverinfo.style.visibility = "hidden";
+          clearTimeout(gHideCopyInfoTextTimer)
+          gHoverinfoCopyInfoText.style.display = "none"
+        }
+      }
+
+      const data = {{data|safe}};
+
+      const highlightNodes = new Set();
+      const highlightLinks = new Set();
+
+      let gHideCopyInfoTextTimer = null;
+      const gHoverinfo = document.getElementById("forcegraph-hoverinfo");
+      const gHoverinfoContent = document.getElementById("forcegraph-hoverinfo-content");
+      const gHoverinfoCopyInfoText = document.getElementById("forcegraph-hoverinfo-copy-info-text");
+
+      const Graph = ForceGraph()(document.getElementById("graph"))
+        .graphData(data)
+        .d3VelocityDecay(0.7)
+        .cooldownTime(15000)
+        .enablePointerInteraction(true)
+        .enableNodeDrag(false)
+        .nodeId("Address")
+        .onNodeClick(onNodeClick)
+        .nodeColor("Color")
+        .onNodeHover(onNodeHover)
+        .nodeRelSize(getComputedStyle(document.body).getPropertyValue('--forcegraph-node-radius'))
+        .nodeVal(
+          node => {
+            if (highlightNodes.has(node.Address)){
+                return 1.25;
+            };
+          }
+        )
+        .onLinkClick(onLinkClick)
+        .linkColor(link => highlightLinks.has(link.source.Address + "_" + link.target.Address) ? getComputedStyle(document.body).getPropertyValue('--forcegraph-link-color-highlighted') : getComputedStyle(document.body).getPropertyValue('--forcegraph-link-color'))
+        .onLinkHover(onLinkHover)
+        .linkDirectionalParticles(link => Math.min(10, link.NumMessages)) // setting this to grow with distance of nodes in layout did not work :(
+        .linkDirectionalParticleWidth(link => highlightLinks.has(link.source.Address + "_" + link.target.Address) ? getComputedStyle(document.body).getPropertyValue('--forcegraph-link-particle-width') : 0)
+        .linkDirectionalParticleSpeed(link => (Math.log10(link.NumMessages)+1) * 0.01)
+        .autoPauseRedraw(false);
+    </script>
+  </body>
+</html>
