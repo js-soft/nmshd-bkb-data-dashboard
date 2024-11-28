@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Work Sans";
+  src: url("/static/assets/fonts/work-sans-v19-latin-regular.woff2") format("woff2")
+}
+
 :root {
   --nmshd-orange: #ea7415;
   --nmshd-orange-dark: #e36c18;
@@ -10,6 +15,10 @@
   --forcegraph-link-color-highlighted: #707070;
   --forcegraph-link-particle-width: 4;
   --forcegraph-node-radius: 4;
+}
+
+body {
+  font-family: "Work Sans", "Arial", sans-serif;
 }
 
 html {
