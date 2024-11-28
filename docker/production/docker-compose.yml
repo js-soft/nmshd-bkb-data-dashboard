@@ -1,0 +1,14 @@
+services:
+  webserver:
+    container_name: nmshdBkbDataDashboard
+    image: ghcr.io/js-soft/nmshd-bkb-data-dashboard:${DASHBOARD_VERSION}
+    ports:
+      - "5000:5000/tcp"
+    environment:
+      - MSSQL_HOSTNAME=${MSSQL_HOSTNAME}
+      - MSSQL_PORT=${MSSQL_PORT}
+      - MSSQL_DB=${MSSQL_DB}
+      - MSSQL_USER=${MSSQL_USER}
+      - MSSQL_PASSWORD=${MSSQL_PASSWORD}
+      - MSSQL_TARGET_ENCRYPT_CONNECTION=${MSSQL_TARGET_ENCRYPT_CONNECTION}
+      - MSSQL_TRUST_SERVER_CERTIFICATE=${MSSQL_TRUST_SERVER_CERTIFICATE}
