@@ -1,6 +1,7 @@
+name: nmshd_bkb_data_dashboard_prod
+
 services:
   webserver:
-    container_name: nmshdBkbDataDashboard
     image: ghcr.io/js-soft/nmshd-bkb-data-dashboard:${DASHBOARD_VERSION}
     ports:
       - "5000:5000/tcp"

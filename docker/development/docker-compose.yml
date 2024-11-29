@@ -1,3 +1,5 @@
+name: nmshd_bkb_data_dashboard_dev
+
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -24,10 +26,10 @@ services:
       - MSSQL_HOST=db
       - MSSQL_PORT=1433
       - MSSQL_USER=sa
-      - MSSQL_PASSWORD=${MSSQL_PASSWORD}
-      - MSSQL_DB=${MSSQL_DB}
+      - MSSQL_PASSWORD=${MSSQL_PASSWORD?}
+      - MSSQL_DB=${MSSQL_DB?}
     volumes:
       - type: bind
-        source: ${DB_BACKUP_FILE}
+        source: ${DB_BACKUP_FILE?}
         target: /db-init/backup.bacpac
         read_only: true

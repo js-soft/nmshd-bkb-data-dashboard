@@ -46,11 +46,11 @@ def create_app() -> Flask:
 
 if __name__ == "__main__":
     debug = os.getenv("DEBUG") is not None
-    webserver_hostname = os.getenv("WEBSERVER_HOSTNAME", "localhost")
-    webserver_port = int(os.getenv("WEBSERVER_PORT", "5000"))
+    dashboard_hostname = os.getenv("DASHBOARD_HOSTNAME", "localhost")
+    dashboard_port = int(os.getenv("DASHBOARD_PORT", "5000"))
     app = create_app()
     app.run(
         debug=debug,
-        host=webserver_hostname,
-        port=webserver_port,
+        host=dashboard_hostname,
+        port=dashboard_port,
     )
