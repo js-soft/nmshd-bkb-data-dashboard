@@ -30,6 +30,6 @@ services:
       - MSSQL_DB=${MSSQL_DB?}
     volumes:
       - type: bind
-        source: ${DB_BACKUP_FILE?}
+        source: ${MSSQL_DB_BACKUP_FILE?}
         target: /db-init/backup.bacpac
         read_only: true

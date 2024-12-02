@@ -7,15 +7,16 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache
 COPY pyproject.toml ./
-RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry install --no-root \
+    && rm -rf $POETRY_CACHE_DIR
 
 
 FROM python:3.12-slim-bookworm AS runner
 WORKDIR /app
 
-# Install curl, gpg for healthcheck and odbc download
+# Dependencies for healthcheck and odbc driver
 RUN apt-get update \
-    && apt-get install -y \
+    && apt-get install -y --no-install-recommends \
         curl \
         gnupg2 \
     && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
@@ -24,25 +25,20 @@ RUN apt-get update \
 RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
     && curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list \
     && apt-get update \
-    && ACCEPT_EULA=y apt-get install -y msodbcsql18 \
+    && ACCEPT_EULA=y apt-get install -y --no-install-recommends msodbcsql18 \
     && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 # Set environment variables
-ARG GUNICORN_VERSION="23.0.0"
 ENV GUNICORN_WORKERS=4
-ENV SERVER_HOST=0.0.0.0
-ENV VIRTUAL_ENV=/app/.venv \
-PATH="/app/.venv/bin:$PATH"
 EXPOSE 5000/tcp
 
-COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-COPY src/ src/
+COPY --from=builder /app/.venv /app/.venv
+COPY src/ ./src/
 COPY main.py .
-RUN pip install gunicorn==${GUNICORN_VERSION}
-# env variables cannot be used in array form of entrypoint (cmd-form), but shell format is considered insecure, thus:
-COPY --chmod=755 <<EOT /entrypoint.sh
-#!/usr/bin/env bash
-gunicorn --workers $GUNICORN_WORKERS --bind $SERVER_HOST:5000 "main:create_app()"
-EOT
-ENTRYPOINT [ "/entrypoint.sh" ]
+RUN /app/.venv/bin/pip install gunicorn==23.0.0
+
+# Note: We use exec to replace the shell process with the gunicorn process to receive UNIX signals (and use the shell for environment variable processing)
+# ENTRYPOINT [ "/bin/sh", "-c", "tail -f /dev/null"]
+
+ENTRYPOINT [ "/bin/sh", "-c", "exec /app/.venv/bin/python -m gunicorn --workers ${GUNICORN_WORKERS} --bind 0.0.0.0:5000 'main:create_app()'"]
 HEALTHCHECK --interval=30s --timeout=30s --start-period=2s --retries=3 CMD curl -f http://localhost:5000/health || exit 1
