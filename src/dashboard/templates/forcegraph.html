@@ -18,6 +18,9 @@
   </head>
 
   <body>
+  <div id="forcegraph-no-data-message" style="display: none;">
+      No data available to display
+  </div>
     <div id="graph"></div>
     <!-- We bring our own statically placed element to display hover information.
     The built-in hover information follows the cursor and thus obscures the view of the network. -->
@@ -132,6 +135,9 @@
       }
 
       const data = {{data|safe}};
+      if (data.nodes.length == 0) {
+        document.getElementById("forcegraph-no-data-message").style.display = "block"
+      }
 
       const highlightNodes = new Set();
       const highlightLinks = new Set();
