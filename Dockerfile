@@ -9,21 +9,23 @@ ENV POETRY_NO_INTERACTION=1 \
 COPY pyproject.toml ./
 RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
 
+
 FROM python:3.12-slim-bookworm AS runner
+WORKDIR /app
+
 # Install curl, gpg for healthcheck and odbc download
-RUN apt-get update && apt-get install -y \
-curl \
-gnupg2 \
-&& rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y \
+        curl \
+        gnupg2 \
+    && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
 
 # Install odbc driver for worker processes
 RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
     && curl https://packages.microsoft.com/config/debian/12/prod.list | tee /etc/apt/sources.list.d/mssql-release.list \
     && apt-get update \
-    && ACCEPT_EULA=y apt-get install -y \
-        msodbcsql18 \
+    && ACCEPT_EULA=y apt-get install -y msodbcsql18 \
     && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*
-WORKDIR /app
 
 # Set environment variables
 ARG GUNICORN_VERSION="23.0.0"

@@ -1,21 +1,21 @@
 FROM ubuntu:22.04
 
-ARG SQLPACKAGE_FILE_NAME="sqlpackage-linux-latest.zip"
-ARG SQLPACKAGE_FOLDER="/usr/local/sqlpackage"
-
 # Install basic tooling and dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    libunwind8 \
-    libicu-dev \
+RUN apt-get update \
+    && apt-get install -y \
+        wget \
+        unzip \
+        libunwind8 \
+        libicu-dev \
     && rm -rf /var/lib/apt/lists/*
 
+
 # Install sqlpackage following https://learn.microsoft.com/de-de/sql/tools/sqlpackage/sqlpackage-download?view=sql-server-ver16
-RUN wget https://aka.ms/sqlpackage-linux -O ${SQLPACKAGE_FILE_NAME}
-
-RUN unzip ${SQLPACKAGE_FILE_NAME} -d ${SQLPACKAGE_FOLDER}
-
+ARG SQLPACKAGE_FILE_NAME="sqlpackage-linux-latest.zip"
+ARG SQLPACKAGE_FOLDER="/usr/local/sqlpackage"
+RUN wget https://aka.ms/sqlpackage-linux -O ${SQLPACKAGE_FILE_NAME} \
+    && unzip ${SQLPACKAGE_FILE_NAME} -d ${SQLPACKAGE_FOLDER} \
+    && rm ${SQLPACKAGE_FILE_NAME}
 RUN chmod a+x ${SQLPACKAGE_FOLDER}/sqlpackage
 
 
@@ -28,7 +28,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y \
         && rm -rf /var/lib/apt/lists/*
 
 # Make executables of sqltools and sqlpackage available in PATH
-ENV PATH="${PATH}:${SQLPACKAGE_FOLDER}:/opt/mssql-tools18/bin"
+ENV PATH="$PATH:/opt/mssql-tools18/bin"
 
 ADD load_bacpac.sh /db-init/load_bacpac.sh
 RUN chmod +x /db-init/load_bacpac.sh

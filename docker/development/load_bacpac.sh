@@ -1,6 +1,12 @@
 #! /usr/bin/env bash
 
 # Make sure sqlpackage is installed
+if ! command -v sqlcmd &> /dev/null; then
+    echo "sqlcmd is not installed. Please install it before running $0."
+    exit 1
+fi
+
+# Make sure sqlpackage is installed
 if ! command -v sqlpackage &> /dev/null; then
     echo "sqlpackage is not installed. Please install it before running $0."
     exit 1
@@ -15,7 +21,7 @@ fi
 # if database exists, exit
 if sqlcmd -S $MSSQL_HOST,$MSSQL_PORT -U $MSSQL_USER -P $MSSQL_PASSWORD -C -Q "SELECT name FROM sys.databases WHERE name = '$MSSQL_DB'" | grep -q $MSSQL_DB; then
     echo "Database $MSSQL_DB already exists. Please drop it before running $0 or start hacking."
-    exit 1
+    exit 0
 fi
 
 # import
