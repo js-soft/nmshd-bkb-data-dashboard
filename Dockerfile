@@ -38,7 +38,5 @@ COPY main.py .
 RUN /app/.venv/bin/pip install gunicorn==23.0.0
 
 # Note: We use exec to replace the shell process with the gunicorn process to receive UNIX signals (and use the shell for environment variable processing)
-# ENTRYPOINT [ "/bin/sh", "-c", "tail -f /dev/null"]
-
 ENTRYPOINT [ "/bin/sh", "-c", "exec /app/.venv/bin/python -m gunicorn --workers ${GUNICORN_WORKERS} --bind 0.0.0.0:5000 'main:create_app()'"]
 HEALTHCHECK --interval=30s --timeout=30s --start-period=2s --retries=3 CMD curl -f http://localhost:5000/health || exit 1
