@@ -40,16 +40,7 @@ The dashboard server uses multi-process load balancing by default. The number of
 
 2. Provide the location and credentials for the backbone database server to use during development by setting the environment variables listed in the usage instructions above. `DASHBOARD_NUM_WORKERS` is not used in a dev setting.
 
-3. (Optional) A local backbone database server can be bootstrapped from a local _.bacpac_ backup file using the following command. The path to the file has to be specified via the `MSSQL_DB_BACKUP_FILE` environment variable.
-
-    ```bash
-    docker compose                                  \
-        -e MSSQL_DB_BACKUP_FILE=./my-backup.bacpac  \
-        -f ./dev/bootstrap-mssql.docker-compose.yml \
-        up
-    ```
-
-    - [ ] TODO: Aktualisieren, nachdem bootstrap Script aktualisiert worden ist
+3. (Optional) A local backbone mssql server and database can be bootstrapped from a local _.bacpac_ backup file using _dev/bootstrap-mssql.docker-compose.yml_. Check the file for information on what to configure.
 
 4. Start the dashboard server locally via `python main.py`. The hostname and port default to _localhost_ and _5000_, respectively. To override these defaults use the environment variables:
     - `DASHBOARD_HOSTNAME`: Hostname or IP-address of dashboard server
