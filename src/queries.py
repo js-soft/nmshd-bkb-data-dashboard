@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import get_args
 
 import pandas as pd
-from pymssql import Connection
+from pyodbc import Connection
 
 from src import (
     bb_client_type_from_id,
