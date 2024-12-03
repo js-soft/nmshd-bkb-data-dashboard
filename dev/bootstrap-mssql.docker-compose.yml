@@ -23,7 +23,7 @@ services:
         condition: service_healthy
     command: /db-init/load_bacpac.sh
     environment:
-      - MSSQL_HOST=mssql-server
+      - MSSQL_HOSTNAME=mssql-server
       - MSSQL_PORT=1433
       - MSSQL_USER=sa
       - MSSQL_PASSWORD=Bohemian_Rhapsody2024

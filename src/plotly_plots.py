@@ -391,26 +391,28 @@ def activity_plot(
     if len(df) == 0:
         return no_data()
 
-    df = df.filter([time_col, split_col])
-    df["Weekday"] = df[time_col].dt.day_of_week
-    df["Month"] = df[time_col].dt.month
-    df["Week"] = df[time_col].dt.isocalendar().week
-    df["Year"] = df[time_col].dt.year
-    years = sorted(df[time_col].dt.year.unique())
+    # FIXME: density_heatmap expects data to be aggregated, while all we need
+    #        is a heatmap of values for every pair of workday and week. Using
+    #        px.imshow or go.Heatmap would be a better fit but neither provide
+    #        simple dataframe or faceting support. density_heatmap doesn't let
+    #        us specify pretty hover information.
 
-    df = df.sort_values(by=time_col).reindex()
+    df = df.filter([time_col, split_col])
+    df[time_col] = df[time_col].dt.normalize()
+    df["Weekday"] = pd.Categorical(df[time_col].dt.day_of_week, categories=list(range(0, 7)), ordered=True)
+    df["Week"] = pd.Categorical(df[time_col].dt.isocalendar().week, categories=list(range(0, 53)), ordered=True)
+    df["Year"] = pd.Categorical(df[time_col].dt.year, ordered=True)
+    df = df.groupby([time_col, split_col, "Weekday", "Week", "Year"], as_index=False, observed=False).size()
+
     fig = px.density_heatmap(
         df,
         x="Week",
         y="Weekday",
-        z=time_col,
-        histfunc="count",
+        z="size",
         facet_row="Year",
         facet_col=split_col,
-        range_x=(0.5, 52.5),
-        range_y=(-0.5, 6.5),
-        nbinsx=52,
-        nbinsy=7,
+        nbinsx=len(df["Week"].cat.categories),
+        nbinsy=len(df["Weekday"].cat.categories),
         color_continuous_scale=[
             # TODO: Skala logarithmisch-freundlich machen / schwache Aktivitäten besser hervorheben
             [0.0, "rgb(255,255,255)"],  # white
@@ -419,22 +421,24 @@ def activity_plot(
         ],
         category_orders={
             split_col: df[split_col].cat.categories,
+            "Weekday": df["Weekday"].cat.categories,
         },
     )
-    for i in range(1, len(years) + 1):
-        fig.update_yaxes(
-            tickmode="array",
-            tickvals=list(range(7)),
-            ticktext=list(calendar.day_abbr),
-            row=i,
-        )
+    fig.update_yaxes(
+        tickmode="array",
+        tickvals=df["Weekday"].cat.categories,
+        ticktext=list(calendar.day_abbr),
+    )
     fig.update_traces(
         xgap=1.5,
         ygap=1.5,
     )
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     fig.update_layout(
+        xaxis={"fixedrange": True},
+        yaxis={"fixedrange": True},
     )
+    fig.update_coloraxes(colorbar_title="Count")
     return fig
 
 
