@@ -27,7 +27,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
         unixodbc-dev \
         && rm -rf /var/lib/apt/lists/*
 
-# Make executables of sqltools and sqlpackage available in PATH
+# Make executables of sqltools available in PATH
 ENV PATH="$PATH:/opt/mssql-tools18/bin"
 
 COPY load_bacpac.sh /db-init/load_bacpac.sh

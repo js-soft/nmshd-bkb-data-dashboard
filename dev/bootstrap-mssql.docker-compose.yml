@@ -1,7 +1,7 @@
 name: nmshd_bkb_data_dashboard_dev
 
 services:
-  db:
+  mssql-server:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "${MSSQL_PORT}:1433/tcp"
@@ -14,16 +14,16 @@ services:
       timeout: 3s
       retries: 3
       start_period: 15s
-  db-init:
+  mssql-server-init:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./bootstrap-mssql.Dockerfile
     depends_on:
-      db:
+      mssql-server:
         condition: service_healthy
     command: /db-init/load_bacpac.sh
     environment:
-      - MSSQL_HOST=db
+      - MSSQL_HOST=mssql-server
       - MSSQL_PORT=1433
       - MSSQL_USER=sa
       - MSSQL_PASSWORD=${MSSQL_PASSWORD?}
