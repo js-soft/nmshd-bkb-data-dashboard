@@ -1480,5 +1480,11 @@ def rlt_validity_period(df: pd.DataFrame) -> go.Figure:
     p.update_layout(
         showlegend=False,
         paper_bgcolor="rgba(0,0,0,0)",
+        font_family=font_family,
+        hoverlabel={
+            "font": {
+                "family": font_family,
+            }
+        },
     )
     return p
