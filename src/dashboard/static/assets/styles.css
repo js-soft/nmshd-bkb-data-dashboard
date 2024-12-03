@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Work Sans";
+  src: url("/static/assets/fonts/work-sans-v19-latin-regular.woff2") format("woff2")
+}
+
 :root {
   --nmshd-orange: #ea7415;
   --nmshd-orange-dark: #e36c18;
@@ -12,6 +17,10 @@
   --forcegraph-node-radius: 4;
 }
 
+body {
+  font-family: "Work Sans", sans-serif;
+}
+
 html {
   /* Force scrollbar to be visible at all times so that our centered layout
    * doesn't shift its position when switching between pages with and without
@@ -19,6 +28,11 @@ html {
   overflow-y: scroll;
 }
 
+h1#dashboard-title {
+  text-align: center;
+}
+
+/* Dropdown styling elements */
 .dropbtn {
   background-color: var(--layout-grey);
   color: white;
@@ -28,35 +42,38 @@ html {
   border-radius: 4px;
   min-width: 50px;
   width: auto;
-  z-index: 2;
 }
 
 .dropdown {
   position: relative;
-  z-index: 2;
+}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.dropdown:hover .dropbtn {
+  background-color: var(--layout-grey-dark);
 }
 
 .dropdown-content {
   display: none;
   position: absolute;
-  min-width: 160px;
+  min-width: 180px;
   z-index: 2;
   top: 100%;
   left: 0;
+  padding-top: 3px;
+  & label {
+    padding: 2px;
+    border: 1px solid #a0a0a0;
+    background-color: #e0e0e0;
+  }
+  > div:hover {
+    background-color: #dfdfdf;
+  }
 }
 
-.dropdown-content div:hover {
-  background-color: #dfdfdf;
-}
 
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-.dropdown:hover .dropbtn {
-  background-color: var(--layout-grey-dark);
-}
-
+/* Page navigation */
 .page-link {
   display: inline-block;
   padding: 0.5em;
@@ -80,15 +97,12 @@ html {
   margin: auto;
 }
 
-h1#dashboard-title {
-  text-align: center;
-}
-
 div#page-links {
   margin: auto;
   text-align: center;
 }
 
+/* Plot styling */
 .graph-div {
   position: relative;
   display: flex;
@@ -97,16 +111,6 @@ div#page-links {
   margin: 1em;
   border-bottom: 1px solid #c0c0c0;
 }
-
-.modebar-container {
-  z-index: 1;
-}
-
-label {
-  border: 1px solid #a0a0a0;
-  background-color: #e0e0e0;
-}
-
 .plot-title {
   font-size: x-large;
   margin-left: 1em;

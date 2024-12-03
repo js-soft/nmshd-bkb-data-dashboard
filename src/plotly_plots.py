@@ -6,11 +6,18 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
+import plotly.io as pio
 
 from src import client_types, int_bucket_label
 
+pio.templates[pio.templates.default].layout.font.family = "Work Sans"
+pio.templates[pio.templates.default].layout.hoverlabel.font.family = "Work Sans"
+pio.templates[pio.templates.default].layout.paper_bgcolor = "rgba(0,0,0,0)"
+
+
 client_type_colmap = dict(zip(client_types(), px.colors.qualitative.D3))
 
+default_color_seq = px.colors.qualitative.Safe
 
 # Used to abbreviate and pretty print pd.Timestamps.
 time_unit_abbreviations = {
@@ -116,7 +123,6 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
 
     p.update_layout(
         xaxis_categoryorder="total descending",
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -156,7 +162,6 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
 
     p.update_layout(
         xaxis_categoryorder="total descending",
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -196,7 +201,6 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
 
     p.update_layout(
         xaxis_categoryorder="total descending",
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -216,9 +220,9 @@ def message_content_size(df: pd.DataFrame) -> go.Figure:
     p = px.histogram(
         df,
         x="MessageSize",
-        log_y=True,
-        facet_col="ClientType",
         color="ClientType",
+        facet_col="ClientType",
+        log_y=True,
         labels={"MessageSize": "Message Size [B]"},
         color_discrete_map=client_type_colmap,
         category_orders={
@@ -231,7 +235,6 @@ def message_content_size(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -277,7 +280,6 @@ def num_devices_per_identity(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -321,7 +323,6 @@ def num_recipients_per_sender_client_type(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -371,7 +372,6 @@ def num_peers_per_identity(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -433,7 +433,8 @@ def activity_plot(
         ygap=1.5,
     )
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
-    fig.update_layout(paper_bgcolor="rgba(0,0,0,0)")
+    fig.update_layout(
+    )
     return fig
 
 
@@ -469,7 +470,8 @@ def sync_errors(df: pd.DataFrame) -> go.Figure:
             "ErrorCode": df["ErrorCode"].cat.categories,
         },
     )
-    p.update_layout(paper_bgcolor="rgba(0,0,0,0)")
+    p.update_layout(
+    )
     return p
 
 
@@ -493,9 +495,9 @@ def relationship_status_distribution(df: pd.DataFrame) -> go.Figure:
         category_orders={
             "Status": df["Status"].cat.categories,
         },
+        color_discrete_sequence=default_color_seq,
     )
     p.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
         yaxis_categoryorder="total ascending",
     )
     return p
@@ -536,12 +538,12 @@ def relationship_duration_pending(df: pd.DataFrame) -> go.Figure:
         category_orders={
             "DurationBucket": df["DurationBucket"].cat.categories,
         },
+        color_discrete_sequence=default_color_seq,
     )
 
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -561,11 +563,11 @@ def device_push_channel_type(df: pd.DataFrame) -> go.Figure:
 
     p = px.bar(
         df,
-        y="DeviceType",
         x="count",
-        log_x=True,
+        y="DeviceType",
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         orientation="h",
         labels={
             "DeviceType": "Device Type",
@@ -582,7 +584,6 @@ def device_push_channel_type(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -629,7 +630,6 @@ def num_relationship_templates_per_identity(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -680,7 +680,6 @@ def num_tokens_per_identity(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -719,7 +718,6 @@ def token_size(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -763,7 +761,9 @@ def num_datawallet_modifications_per_identity(df: pd.DataFrame) -> go.Figure:
     )
 
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
-    p.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)")
+    p.update_layout(
+        showlegend=False,
+    )
 
     return p
 
@@ -803,7 +803,6 @@ def size_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
         yaxis_title_text="Number of Datawallet Modifications",
     )
 
@@ -843,7 +842,6 @@ def type_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -866,9 +864,9 @@ def collection_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
         df,
         x="count",
         y="Collection",
-        log_x=True,
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         labels={
             "count": "Number of Datawallet Modifications",
         },
@@ -882,7 +880,6 @@ def collection_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -905,9 +902,9 @@ def payload_category_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
         df,
         x="count",
         y="PayloadCategory",
-        log_x=True,
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         labels={
             "PayloadCategory": "Payload Category",
             "count": "Number of Datawallet Modifications",
@@ -922,7 +919,6 @@ def payload_category_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -945,9 +941,9 @@ def type_of_external_events(df: pd.DataFrame) -> go.Figure:
         df,
         x="count",
         y="Type",
-        log_x=True,
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         labels={
             "Type": "External Event Type",
             "count": "Number of External Events",
@@ -962,7 +958,6 @@ def type_of_external_events(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -990,9 +985,9 @@ def num_external_events_per_sync_run(df: pd.DataFrame) -> go.Figure:
         df,
         x="NumExternalEventsBucket",
         y="count",
-        log_y=True,
         color="ClientType",
         facet_col="ClientType",
+        log_y=True,
         labels={
             "NumExternalEventsBucket": "Number of External Events per Sync Run",
             "count": "Number of Sync Runs",
@@ -1006,7 +1001,6 @@ def num_external_events_per_sync_run(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -1047,7 +1041,6 @@ def size_of_relationship_templates(df: pd.DataFrame):
     p.update_layout(
         showlegend=False,
         yaxis_title_text="Number of Relationship Templates",
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -1068,9 +1061,9 @@ def size_of_file_contents(df: pd.DataFrame) -> go.Figure:
     p = px.histogram(
         df,
         x="FileSize",
-        log_y=True,
-        facet_col="ClientType",
         color="ClientType",
+        facet_col="ClientType",
+        log_y=True,
         labels={"FileSize": "File Size [B]"},
         color_discrete_map=client_type_colmap,
         category_orders={
@@ -1082,7 +1075,6 @@ def size_of_file_contents(df: pd.DataFrame) -> go.Figure:
     p.update_layout(
         showlegend=False,
         yaxis_title_text="Number of Files",
-        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     return p
@@ -1136,7 +1128,6 @@ def num_max_rel_templ_allocations(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     p.update_traces(
         hovertemplate="<br>".join(
@@ -1189,7 +1180,6 @@ def num_files_per_identity(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -1235,8 +1225,8 @@ def rlt_time_until_first_usage(df: pd.DataFrame) -> go.Figure:
         df,
         x="TimeBucket",
         y="count",
-        facet_col="RLTCreatorClientType",
         color="RLTCreatorClientType",
+        facet_col="RLTCreatorClientType",
         log_y=True,
         labels={
             "TimeBucket": "Time until first usage of Relationship Template",
@@ -1252,7 +1242,6 @@ def rlt_time_until_first_usage(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
 
@@ -1298,6 +1287,5 @@ def rlt_validity_period(df: pd.DataFrame) -> go.Figure:
     p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
     p.update_layout(
         showlegend=False,
-        paper_bgcolor="rgba(0,0,0,0)",
     )
     return p
