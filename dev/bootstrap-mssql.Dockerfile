@@ -19,16 +19,16 @@ RUN chmod +x ${SQLPACKAGE_FOLDER}/sqlpackage \
     && ln -s ${SQLPACKAGE_FOLDER}/sqlpackage /usr/local/bin
 
 
-# Install mssql-tools following https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup-tools?view=sql-server-ver16&tabs=redhat-instal
+# Install mssql-tools following https://learn.microsoft.com/en-us/sql/linux/sql-server-linux-setup-tools?view=sql-server-ver16&tabs=redhat-install
 RUN wget -O- -q https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
 RUN wget -O- -q https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
 RUN apt-get update && ACCEPT_EULA=Y apt-get install -y --no-install-recommends \
         mssql-tools18 \
         unixodbc-dev \
-        && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Make executables of sqltools available in PATH
-ENV PATH="$PATH:/opt/mssql-tools18/bin"
+ENV PATH="/opt/mssql-tools18/bin:$PATH"
 
 COPY load_bacpac.sh /db-init/load_bacpac.sh
 RUN chmod +x /db-init/load_bacpac.sh
