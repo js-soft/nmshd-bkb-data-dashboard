@@ -7,9 +7,9 @@ services:
       - "${MSSQL_PORT}:1433/tcp"
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: ${MSSQL_PASSWORD}
+      SA_PASSWORD: Bohemian_Rhapsody2024
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${MSSQL_PASSWORD}" -C -Q "SELECT 1" -b -o /dev/null
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Bohemian_Rhapsody2024 -C -Q "SELECT 1" -b -o /dev/null
       interval: 10s
       timeout: 3s
       retries: 3
@@ -23,10 +23,10 @@ services:
         condition: service_healthy
     command: /db-init/load_bacpac.sh
     environment:
-      - MSSQL_HOSTNAME=mssql-server
+      - MSSQL_HOST=mssql-server
       - MSSQL_PORT=1433
       - MSSQL_USER=sa
-      - MSSQL_PASSWORD=${MSSQL_PASSWORD?}
+      - MSSQL_PASSWORD=Bohemian_Rhapsody2024
       - MSSQL_DB=${MSSQL_DB?}
     volumes:
       - type: bind
