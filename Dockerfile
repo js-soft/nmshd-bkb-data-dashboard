@@ -7,7 +7,7 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache
 COPY pyproject.toml ./
-RUN poetry install --no-root \
+RUN poetry install --no-root --only main \
     && rm -rf $POETRY_CACHE_DIR
 
 
