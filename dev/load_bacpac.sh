@@ -27,7 +27,7 @@ fi
 # import
 sqlpackage \
     /Action:Import \
-    /TargetServerName:$MSSQL_HOST,$MSSQL_PORT \
+    /TargetServerName:$MSSQL_HOSTNAME,$MSSQL_PORT \
     /TargetDatabaseName:$MSSQL_DB \
     /TargetUser:$MSSQL_USER \
     /TargetPassword:$MSSQL_PASSWORD \
