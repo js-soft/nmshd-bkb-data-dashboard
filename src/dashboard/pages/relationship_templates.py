@@ -106,5 +106,30 @@ layout = html.Div(
             id="rlt_time_until_first_usage$div",
             className="graph-div",
         ),
+        html.Div(
+            [
+                html.Div(
+                    children=[
+                        _get_dropdown(
+                            children=[
+                                dcc.Checklist(
+                                    id="rlt_validity_period$hideTestClients",
+                                    options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
+                                    value=["hide_test_clients"],
+                                ),
+                            ]
+                        ),
+                        html.Span(
+                            children=["Validity Period of Relationship Templates"],
+                            className="plot-title",
+                        ),
+                    ],
+                    className="plot-header",
+                ),
+                dcc.Graph(id="rlt_validity_period$graph"),
+            ],
+            id="rlt_validity_period$div",
+            className="graph-div",
+        ),
     ],
 )
