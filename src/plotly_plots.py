@@ -72,6 +72,15 @@ def make_timedelta_interval_label(interval: pd.Interval) -> str:
     return str(interval)
 
 
+def no_data() -> go.Figure:
+    p = (
+        go.Figure()
+        .add_annotation({"text": "No data available to display", "showarrow": False})
+        .update_layout({"yaxis": {"visible": False}, "xaxis": {"visible": False}})
+    )
+    return p
+
+
 def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
     """
     Accepts a dataframe with the following columns:
@@ -79,6 +88,9 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
     - ClientType: category (ordered)
     - NumIdentities
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientId", "ClientType", "NumIdentities"])
 
@@ -117,6 +129,9 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
     - SenderClientType: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["NumMessages", "SenderClientId", "SenderClientType"])
 
     p = px.bar(
@@ -154,6 +169,9 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
     - RecipientClientType: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["NumMessages", "RecipientClientId", "RecipientClientType"])
 
     p = px.bar(
@@ -190,6 +208,9 @@ def message_content_size(df: pd.DataFrame) -> go.Figure:
     - MessageSize
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["ClientType", "MessageSize"])
 
     p = px.histogram(
@@ -223,6 +244,9 @@ def num_devices_per_identity(df: pd.DataFrame) -> go.Figure:
     - NumDevices
     - count
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientType", "NumDevices", "count"])
 
@@ -266,6 +290,9 @@ def num_recipients_per_sender_client_type(df: pd.DataFrame) -> go.Figure:
     - SenderClientType: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["NumRecipients", "NumSentMessages", "SenderClientType"])
 
     maxexp = int(max(2, np.floor(np.log10(df["NumRecipients"].max())) + 1))
@@ -305,6 +332,9 @@ def num_peers_per_identity(df: pd.DataFrame) -> go.Figure:
     - ClientType: category (ordered)
     - NumPeers
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientType", "NumPeers"])
     df = (
@@ -357,6 +387,9 @@ def activity_plot(
     - [time_col]: datetime64[ns]
     - [split_col]: category (ordered)
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter([time_col, split_col])
     df["Weekday"] = df[time_col].dt.day_of_week
@@ -412,6 +445,9 @@ def sync_errors(df: pd.DataFrame) -> go.Figure:
     - ErrorCode: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["CreatedAt", "ErrorCode"])
     df["CreatedAt"] = df["CreatedAt"].dt.normalize()
     df = (
@@ -443,6 +479,9 @@ def relationship_status_distribution(df: pd.DataFrame) -> go.Figure:
     - Status: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["Status"])
     df = df.groupby(["Status"], as_index=False, observed=True).value_counts()
     p = px.bar(
@@ -468,6 +507,9 @@ def relationship_duration_pending(df: pd.DataFrame) -> go.Figure:
     - CreatedAt: datetime64[ns]
     - AnsweredAt: datetime64[ns]
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["AnsweredAt", "CreatedAt"])
 
@@ -511,6 +553,9 @@ def device_push_channel_type(df: pd.DataFrame) -> go.Figure:
     - DeviceType: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["ClientType", "DeviceType"])
     df = df.groupby(["ClientType"], as_index=False, observed=False).value_counts()
 
@@ -549,6 +594,9 @@ def num_relationship_templates_per_identity(df: pd.DataFrame) -> go.Figure:
      - ClientType: category (ordered)
      - NumTemplates
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientType", "NumTemplates"])
     df = df.groupby("ClientType", observed=True, as_index=False).value_counts()
@@ -593,6 +641,9 @@ def num_tokens_per_identity(df: pd.DataFrame) -> go.Figure:
      - ClientType: category (ordered)
      - NumTokens
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientType", "NumTokens"])
     df = (
@@ -642,6 +693,9 @@ def token_size(df: pd.DataFrame) -> go.Figure:
     - TokenSize
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["ClientType", "TokenSize"])
 
     p = px.histogram(
@@ -678,6 +732,9 @@ def num_datawallet_modifications_per_identity(df: pd.DataFrame) -> go.Figure:
     - NumDWM
     - count
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientType", "NumDWM", "count"])
 
@@ -717,6 +774,9 @@ def size_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     - Size
     - ClientType: category (ordered)
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["Size", "ClientType"])
 
@@ -758,6 +818,9 @@ def type_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     - count
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["ClientType", "Type", "count"])
 
     p = px.bar(
@@ -794,6 +857,9 @@ def collection_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     - Count
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["Collection", "ClientType", "count"])
 
     p = px.bar(
@@ -829,6 +895,9 @@ def payload_category_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
     - ClientType: category (ordered)
     - count
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["PayloadCategory", "ClientType", "count"])
 
@@ -867,6 +936,9 @@ def type_of_external_events(df: pd.DataFrame) -> go.Figure:
     - Type: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["ClientType", "Type", "count"])
 
     p = px.bar(
@@ -903,6 +975,9 @@ def num_external_events_per_sync_run(df: pd.DataFrame) -> go.Figure:
     - NumExternalEvents
     - count
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ClientType", "NumExternalEvents", "count"])
 
@@ -944,6 +1019,9 @@ def size_of_relationship_templates(df: pd.DataFrame):
     - ClientType: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["RelationshipTemplateSize", "ClientType"])
 
     bin_width = 50
@@ -982,6 +1060,9 @@ def size_of_file_contents(df: pd.DataFrame) -> go.Figure:
     - ClientType: category (ordered)
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["FileSize", "ClientType"])
 
     p = px.histogram(
@@ -1015,6 +1096,9 @@ def num_max_rel_templ_allocations(df: pd.DataFrame) -> go.Figure:
     - NumAllocs
     - RelRLTAllocs
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["RLTCreatorClientType", "MaxAllocs", "NumAllocs", "RelRLTAllocs"])
 
@@ -1074,6 +1158,9 @@ def num_files_per_identity(df: pd.DataFrame) -> go.Figure:
     - count
     """
 
+    if len(df) == 0:
+        return no_data()
+
     df = df.filter(["ClientType", "NumFiles", "count"])
 
     maxexp = int(max(2, np.floor(np.log10(df["NumFiles"].max())) + 1))
@@ -1114,6 +1201,9 @@ def rlt_time_until_first_usage(df: pd.DataFrame) -> go.Figure:
     - RLTCreatorClientType: category (ordered)
     - TimeUntilFirstUsage: timedelta64[us]
     """
+
+    if len(df) == 0:
+        return no_data()
 
     df = df.filter(["ExpiredUnallocated", "RLTCreatorClientType", "TimeUntilFirstUsage"])
 
