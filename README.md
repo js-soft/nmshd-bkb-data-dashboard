@@ -27,7 +27,7 @@ docker run --rm                             \
 	"ghcr.io/js-soft/nmshd-bkb-data-dashboard:latest"
 ```
 
-- [ ] TODO: GUNICORN_WORKER
+The dashboard server uses multi-process load balancing by default. The number of workers defaults to 4 can be set via the environment variable `DASHBOARD_NUM_WORKERS`. If your method of deployment has other means of horizontal scaling the built-in load balancing can be disabled by setting the number of workers to 1.
 
 # Dev Setup
 
@@ -38,7 +38,7 @@ docker run --rm                             \
     poetry shell
     ```
 
-2. Provide the location and credentials for the backbone database server to use during development by setting the environment variables listed in the usage instructions above.
+2. Provide the location and credentials for the backbone database server to use during development by setting the environment variables listed in the usage instructions above. `DASHBOARD_NUM_WORKERS` is not used in a dev setting.
 
 3. (Optional) A local backbone database server can be bootstrapped from a local _.bacpac_ backup file using the following command. The path to the file has to be specified via the `MSSQL_DB_BACKUP_FILE` environment variable.
 
@@ -48,6 +48,8 @@ docker run --rm                             \
         -f ./dev/bootstrap-mssql.docker-compose.yml \
         up
     ```
+
+    - [ ] TODO: Aktualisieren, nachdem bootstrap Script aktualisiert worden ist
 
 4. Start the dashboard server locally via `python main.py`. The hostname and port default to _localhost_ and _5000_, respectively. To override these defaults use the environment variables:
     - `DASHBOARD_HOSTNAME`: Hostname or IP-address of dashboard server
