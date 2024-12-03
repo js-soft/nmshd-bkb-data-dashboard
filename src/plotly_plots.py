@@ -222,9 +222,9 @@ def message_content_size(df: pd.DataFrame) -> go.Figure:
     p = px.histogram(
         df,
         x="MessageSize",
-        log_y=True,
-        facet_col="ClientType",
         color="ClientType",
+        facet_col="ClientType",
+        log_y=True,
         labels={"MessageSize": "Message Size [B]"},
         color_discrete_map=client_type_colmap,
         category_orders={
@@ -598,11 +598,11 @@ def device_push_channel_type(df: pd.DataFrame) -> go.Figure:
 
     p = px.bar(
         df,
-        y="DeviceType",
         x="count",
-        log_x=True,
+        y="DeviceType",
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         orientation="h",
         labels={
             "DeviceType": "Device Type",
@@ -927,9 +927,9 @@ def collection_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
         df,
         x="count",
         y="Collection",
-        log_x=True,
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         labels={
             "count": "Number of Datawallet Modifications",
         },
@@ -969,9 +969,9 @@ def payload_category_of_datawallet_modifications(df: pd.DataFrame) -> go.Figure:
         df,
         x="count",
         y="PayloadCategory",
-        log_x=True,
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         labels={
             "PayloadCategory": "Payload Category",
             "count": "Number of Datawallet Modifications",
@@ -1012,9 +1012,9 @@ def type_of_external_events(df: pd.DataFrame) -> go.Figure:
         df,
         x="count",
         y="Type",
-        log_x=True,
         color="ClientType",
         facet_col="ClientType",
+        log_x=True,
         labels={
             "Type": "External Event Type",
             "count": "Number of External Events",
@@ -1060,9 +1060,9 @@ def num_external_events_per_sync_run(df: pd.DataFrame) -> go.Figure:
         df,
         x="NumExternalEventsBucket",
         y="count",
-        log_y=True,
         color="ClientType",
         facet_col="ClientType",
+        log_y=True,
         labels={
             "NumExternalEventsBucket": "Number of External Events per Sync Run",
             "count": "Number of Sync Runs",
@@ -1144,9 +1144,9 @@ def size_of_file_contents(df: pd.DataFrame) -> go.Figure:
     p = px.histogram(
         df,
         x="FileSize",
-        log_y=True,
-        facet_col="ClientType",
         color="ClientType",
+        facet_col="ClientType",
+        log_y=True,
         labels={"FileSize": "File Size [B]"},
         color_discrete_map=client_type_colmap,
         category_orders={
@@ -1320,8 +1320,8 @@ def rlt_time_until_first_usage(df: pd.DataFrame) -> go.Figure:
         df,
         x="TimeBucket",
         y="count",
-        facet_col="RLTCreatorClientType",
         color="RLTCreatorClientType",
+        facet_col="RLTCreatorClientType",
         log_y=True,
         labels={
             "TimeBucket": "Time until first usage of Relationship Template",
