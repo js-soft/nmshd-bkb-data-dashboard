@@ -31,7 +31,7 @@ The dashboard server uses multi-process load balancing by default. The number of
 
 # Dev Setup
 
-1. Clone the repository, ensure [Python ≥3.12](https://github.com/pyenv/pyenv) and [Poetry](https://python-poetry.org/) are installed. Install all dependencies and activate your virtual environment.
+1. Clone the repository, ensure [Python ≥3.12](https://github.com/pyenv/pyenv), [Poetry](https://python-poetry.org/) and the [Work Sans font](https://fonts.google.com/specimen/Work+Sans) are installed. Then install all dependencies and activate your virtual environment.
 
     ```bash
     poetry install --with dev
