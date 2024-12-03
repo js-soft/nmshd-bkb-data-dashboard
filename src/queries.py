@@ -962,3 +962,39 @@ def rlt_time_until_first_usage(
     df = df.drop(columns=["ClientId", "FirstAllocatedAt", "CreatedAt", "ExpiresAt", "NumAllocations"])
 
     return df
+
+
+def rlt_validity_period(
+    cnxn: Connection,
+    hide_test_clients: bool,
+) -> pd.DataFrame:
+    """
+    Returns dataframe with the following columns:
+    - ValidityPeriod: timedelta64[us]
+    - RLTCreatorClientType: category (ordered)
+    """
+
+    query = """
+    SELECT A.CreatedAt,
+           A.ExpiresAt,
+           B.ClientId
+    FROM Relationships.RelationshipTemplates as A
+    JOIN Devices.Identities as B
+    ON A.CreatedBy = B.Address
+    """
+    df = pd.read_sql_query(query, cnxn)
+    if hide_test_clients:
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
+
+    # ExpiresAt contains large timestamps (9999-12-31) which overflow
+    # datetime64[ns]. We thus use us-precision here.
+    df["CreatedAt"] = df["CreatedAt"].astype("datetime64[us]")
+    df["ExpiresAt"] = df["ExpiresAt"].astype("datetime64[us]").fillna("9999-12-31")
+    df["ValidityPeriod"] = df["ExpiresAt"] - df["CreatedAt"]
+
+    df["RLTCreatorClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
+    df = df.drop(columns=["ClientId", "CreatedAt", "ExpiresAt"])
+
+    return df

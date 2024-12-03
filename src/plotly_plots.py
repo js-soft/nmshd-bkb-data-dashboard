@@ -1436,3 +1436,49 @@ def rlt_time_until_first_usage(df: pd.DataFrame) -> go.Figure:
         },
     )
     return p
+
+
+def rlt_validity_period(df: pd.DataFrame) -> go.Figure:
+    """
+    Accepts a dataframe with the following columns:
+    - ValidityPeriod: timedelta64[us]
+    - RLTCreatorClientType: category (ordered)
+    """
+
+    if len(df) == 0:
+        return no_data()
+
+    df = df.filter(["ValidityPeriod", "RLTCreatorClientType"])
+
+    intervals = make_timedelta_intervalindex(df["ValidityPeriod"].max().asm8, "us")
+    df["TimeBucket"] = pd.cut(df["ValidityPeriod"], bins=intervals).cat.rename_categories(make_timedelta_interval_label)
+    df = (
+        df.filter(["RLTCreatorClientType", "TimeBucket"])
+        .groupby(["RLTCreatorClientType"], as_index=False, observed=False)
+        .value_counts()
+    )
+
+    p = px.bar(
+        df,
+        x="TimeBucket",
+        y="count",
+        facet_col="RLTCreatorClientType",
+        color="RLTCreatorClientType",
+        log_y=True,
+        labels={
+            "TimeBucket": "Validity Period of Relationship Template",
+            "count": "Number of Relationship Templates",
+        },
+        color_discrete_map=client_type_colmap,
+        category_orders={
+            "TimeBucket": df["TimeBucket"].cat.categories,
+            "RLTCreatorClientType": df["RLTCreatorClientType"].cat.categories,
+        },
+    )
+
+    p.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
+    p.update_layout(
+        showlegend=False,
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
+    return p

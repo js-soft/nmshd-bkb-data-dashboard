@@ -411,6 +411,16 @@ class DashboardApp:
                 df = queries.rlt_time_until_first_usage(cnxn, hide)
             return plots.rlt_time_until_first_usage(df)
 
+        @self._app.callback(
+            Output("rlt_validity_period$graph", "figure"),
+            Input("rlt_validity_period$hideTestClients", "value"),
+        )
+        def rlt_validity_period(hide_list: list | None) -> go.Figure:
+            hide = hide_list is not None and len(hide_list) > 0
+            with self._grab_cnxn() as cnxn:
+                df = queries.rlt_validity_period(cnxn, hide)
+            return plots.rlt_validity_period(df)
+
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)
