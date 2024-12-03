@@ -3,6 +3,7 @@ from warnings import filterwarnings
 
 import pyodbc
 import sqlalchemy
+from flask import Flask
 from sqlalchemy.dialects import mssql
 
 from src.dashboard import DashboardApp
@@ -11,23 +12,24 @@ from src.dashboard import DashboardApp
 filterwarnings("ignore", category=UserWarning, message=".*pandas only supports SQLAlchemy connectable.*")
 
 
-def main():
-    HOST = os.getenv("MSSQL_HOST")
-    USER = os.getenv("MSSQL_USER")
-    PASSWORD = os.getenv("MSSQL_PASSWORD")
-    DATABASE = os.getenv("MSSQL_DB")
-    DEBUG = os.getenv("DEBUG") is not None
+def create_app() -> Flask:
+    mssql_hostname = os.getenv("MSSQL_HOSTNAME")
+    mssql_port = os.getenv("MSSQL_PORT")
+    mssql_user = os.getenv("MSSQL_USER")
+    mssql_password = os.getenv("MSSQL_PASSWORD")
+    mssql_database = os.getenv("MSSQL_DB")
+    mssql_target_encrypt_connection = os.getenv("MSSQL_TARGET_ENCRYPT_CONNECTION", "no")
+    mssql_trust_server_certificate = os.getenv("MSSQL_TRUST_SERVER_CERTIFICATE", "yes")
 
     def make_conn():
         return pyodbc.connect(
-            f"SERVER={HOST};"
-            f"UID={USER};"
-            f"PWD={PASSWORD};"
-            f"DATABASE={DATABASE};"
+            f"SERVER={mssql_hostname},{mssql_port};"
+            f"UID={mssql_user};"
+            f"PWD={mssql_password};"
+            f"DATABASE={mssql_database};"
             "Driver=ODBC Driver 18 for SQL Server;"
-            "TargetEncryptConnection=false;"
-            "TrustServerCertificate=yes;"
-            "MARS_Connection=yes;",
+            f"TargetEncryptConnection={mssql_target_encrypt_connection};"
+            f"TrustServerCertificate={mssql_trust_server_certificate};",
             readonly=True,
         )
 
@@ -39,10 +41,16 @@ def main():
         pre_ping=True,
         dialect=mssql.dialect(),  # required when pre_ping is set.
     )
-
-    app = DashboardApp(cnxn_pool)
-    app.run(debug=DEBUG, host="0.0.0.0")
+    return DashboardApp(cnxn_pool)._app.server
 
 
 if __name__ == "__main__":
-    main()
+    debug = os.getenv("DEBUG") is not None
+    dashboard_hostname = os.getenv("DASHBOARD_HOSTNAME", "localhost")
+    dashboard_port = int(os.getenv("DASHBOARD_PORT", "5000"))
+    app = create_app()
+    app.run(
+        debug=debug,
+        host=dashboard_hostname,
+        port=dashboard_port,
+    )

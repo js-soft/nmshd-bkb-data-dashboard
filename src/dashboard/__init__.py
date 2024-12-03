@@ -421,8 +421,6 @@ class DashboardApp:
                 df = queries.rlt_validity_period(cnxn, hide)
             return plots.rlt_validity_period(df)
 
-    def run(self, *args, **kwargs):
-        return self._app.run(*args, **kwargs)
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)
