@@ -43,7 +43,15 @@ def num_identities_per_client(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        # Subsetting with an empty mask degenerates a dataframe, removing all
+        # column information. This holds true even for empty dataframes where
+        # one would naturally expect any subsetting or filtering to be a no-op.
+        # In our case we obtain empty masks where an empty result set is
+        # returned by the database and thus we apply a mask if and only if it
+        # is non-empty.
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df["ClientId"] = pd.Categorical(df["ClientId"], ordered=True)
 
@@ -70,7 +78,9 @@ def num_sent_messages_per_client(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["SenderClientId"].map(is_test_client)]
+        mask = ~df["SenderClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["SenderClientType"] = pd.Categorical(df["SenderClientId"].map(bb_client_type_from_id), ordered=True)
     df["SenderClientId"] = pd.Categorical(df["SenderClientId"], ordered=True)
 
@@ -97,7 +107,9 @@ def num_received_messages_per_client(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["RecipientClientId"].map(is_test_client)]
+        mask = ~df["RecipientClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["RecipientClientType"] = pd.Categorical(df["RecipientClientId"].map(bb_client_type_from_id), ordered=True)
     df["RecipientClientId"] = pd.Categorical(df["RecipientClientId"], ordered=True)
 
@@ -125,7 +137,9 @@ def num_devices_per_identity(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df = df.groupby(["ClientType", "NumDevices"], as_index=False, observed=True).value_counts()
@@ -154,7 +168,9 @@ def num_recipients_per_sender_client_type(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["SenderClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df = (
@@ -181,7 +197,9 @@ def identity_creations(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["CreatedAt"] = df["CreatedAt"].astype("datetime64[ns]")
@@ -207,7 +225,9 @@ def messages(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["CreatedAt"] = df["CreatedAt"].astype("datetime64[ns]")
@@ -232,7 +252,9 @@ def external_events(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["CreatedAt"] = df["CreatedAt"].astype("datetime64[ns]")
@@ -274,7 +296,9 @@ def num_peers_per_identity(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
 
@@ -302,7 +326,9 @@ def sync_errors(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["CreatedAt"] = df["CreatedAt"].astype("datetime64[ns]")
@@ -338,8 +364,9 @@ def relationships(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["FromClientId"].map(is_test_client)]
-        df = df[~df["ToClientId"].map(is_test_client)]
+        mask = ~df["FromClientId"].map(is_test_client) & ~df["ToClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["FromClientType"] = pd.Categorical(df["FromClientId"].map(bb_client_type_from_id), ordered=True)
     df["ToClientType"] = pd.Categorical(df["ToClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["FromClientId", "ToClientId"])
@@ -377,7 +404,9 @@ def device_push_channel_types(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["DeviceType"] = pd.Categorical(
@@ -417,7 +446,9 @@ def num_relationship_templates_per_identity(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
 
@@ -447,7 +478,9 @@ def num_tokens_per_identity(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
 
@@ -474,7 +507,9 @@ def token_size(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
 
     return df
@@ -500,7 +535,9 @@ def num_datawallet_modifications_per_identity(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df = df.groupby(["NumDWM", "ClientType"], as_index=False, observed=True).value_counts()
@@ -526,7 +563,9 @@ def size_of_datawallet_modifications(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["Size"] = df["Size"].fillna(0.0)
@@ -553,7 +592,9 @@ def type_of_datawallet_modifications(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df["Type"] = pd.Categorical(
         df["Type"].map(bb_datawallet_modification_type_map),
@@ -585,7 +626,9 @@ def collection_of_datawallet_modifications(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["Collection"] = pd.Categorical(
@@ -619,7 +662,9 @@ def payload_category_of_datawallet_modifications(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["PayloadCategory"] = pd.Categorical(df["PayloadCategory"].fillna("Empty"), ordered=True)
@@ -647,7 +692,9 @@ def type_of_external_events(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["Type"] = pd.Categorical(
@@ -680,7 +727,9 @@ def size_of_relationship_templates(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     return df
@@ -707,7 +756,9 @@ def num_external_events_per_sync_run(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df = (
@@ -744,7 +795,9 @@ def relationship_templates_usage(
     df = pd.read_sql_query(query, cnxn)
     df["CreationClientType"] = df["CreatedBy"].map(bb_client_type_from_id).astype("category")
     if hide_test_clients:
-        df = df[~df["CreatedBy"].map(is_test_client)]
+        mask = ~df["CreatedBy"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     return df
 
 
@@ -766,7 +819,9 @@ def size_of_file_contents(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     return df
@@ -797,7 +852,9 @@ def num_max_rel_templ_allocations(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["RLTCreatorClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df["RelRLTAllocs"] = df["NumAllocs"] / df["MaxAllocs"]
     df.loc[df["MaxAllocs"].isna(), "RelRLTAllocs"] = pd.NA
@@ -825,7 +882,9 @@ def activity_num_created_files(
     # TODO: Remove deleted files from df?
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     return df
@@ -852,7 +911,9 @@ def num_files_per_identity(
     df = pd.read_sql_query(query, cnxn)
 
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df = df.groupby(["ClientType", "NumFiles"], as_index=False, observed=True).value_counts()
@@ -885,7 +946,9 @@ def rlt_time_until_first_usage(
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
-        df = df[~df["ClientId"].map(is_test_client)]
+        mask = ~df["ClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
 
     # ExpiresAt contains large timestamps (9999-12-31) which overflow
     # datetime64[ns]. We thus use us-precision here.

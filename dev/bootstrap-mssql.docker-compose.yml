@@ -1,0 +1,35 @@
+name: nmshd_bkb_data_dashboard_dev
+
+services:
+  mssql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "${MSSQL_PORT}:1433/tcp"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: Bohemian_Rhapsody2024
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Bohemian_Rhapsody2024 -C -Q "SELECT 1" -b -o /dev/null
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+  mssql-server-db-bootstrap:
+    build:
+      context: .
+      dockerfile: ./bootstrap-mssql.Dockerfile
+    depends_on:
+      mssql-server:
+        condition: service_healthy
+    command: /db-init/load_bacpac.sh
+    environment:
+      - MSSQL_HOST=mssql-server
+      - MSSQL_PORT=1433
+      - MSSQL_USER=sa
+      - MSSQL_PASSWORD=Bohemian_Rhapsody2024
+      - MSSQL_DB=${MSSQL_DB?}
+    volumes:
+      - type: bind
+        source: ${MSSQL_DB_BACKUP_FILE?}
+        target: /db-init/backup.bacpac
+        read_only: true

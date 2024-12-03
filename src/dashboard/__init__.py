@@ -411,8 +411,6 @@ class DashboardApp:
                 df = queries.rlt_time_until_first_usage(cnxn, hide)
             return plots.rlt_time_until_first_usage(df)
 
-    def run(self, *args, **kwargs):
-        return self._app.run(*args, **kwargs)
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)
