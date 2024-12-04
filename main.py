@@ -43,15 +43,17 @@ def create_app(*, init_config_from_env=True) -> Flask:
 
 def main():
     debug = os.getenv("DEBUG") is not None
+    # XXX: richtige Typen übergeben
     cfg = config.init(
         MSSQL_HOSTNAME="localhost",
-        MSSQL_PORT=os.environ.get("MSSQL_PORT", "1433"),
+        MSSQL_PORT=int(os.environ.get("MSSQL_PORT", "1433")),
         MSSQL_USER="sa",
         MSSQL_PASSWORD="Bohemian_Rhapsody2024",
         MSSQL_TARGET_ENCRYPT_CONNECTION="false",
         MSSQL_TRUST_SERVER_CERTIFICATE="true",
         DASHBOARD_HOSTNAME=os.environ.get("DASHBOARD_HOSTNAME", "localhost"),
-        DASHBOARD_PORT=os.environ.get("DASHBOARD_PORT", "5000"),
+        DASHBOARD_PORT=int(os.environ.get("DASHBOARD_PORT", "5000")),
+        DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT=os.environ.get("DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT", "false"),
     )
 
     app = create_app(init_config_from_env=False)

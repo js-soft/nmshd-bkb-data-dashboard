@@ -1,6 +1,7 @@
 import dash
 from dash import dcc, html
 
+from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -15,7 +16,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="forcegraph$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -44,7 +45,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="relationship_status_distribution$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -69,7 +70,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="relationship_duration_pending$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -94,7 +95,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="num_peers_per_identity$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),

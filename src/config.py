@@ -9,6 +9,7 @@ from pydantic_settings import BaseSettings
 _config: _Config
 
 
+# XXX: Typisierung
 def init(**kwargs) -> _Config:
     global _config
     try:
@@ -34,11 +35,13 @@ class _Config(BaseSettings):
 
     DASHBOARD_HOSTNAME: str
     DASHBOARD_PORT: int
+    DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT: bool
 
 
     @field_validator(
         "MSSQL_TARGET_ENCRYPT_CONNECTION",
         "MSSQL_TRUST_SERVER_CERTIFICATE",
+        "DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT",
         mode="before",
     )
     @classmethod

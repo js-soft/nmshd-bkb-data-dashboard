@@ -9,21 +9,22 @@ Releases are available as Docker images in the [project's Github container regis
 - `MSSQL_DB`: Name of the backbone database to target within the MSSQL server, e.g. _bkb-data_.
 - `MSSQL_USER`: Username, e.g. _admin_.
 - `MSSQL_PASSWORD`: Password for above user, e.g. _pa$$w0rd554_.
-- `MSSQL_TARGET_ENCRYPT_CONNECTION`: Specifies if SQL encryption should be used for the target database connection. Must be either _yes_ or _no_.
-- `MSSQL_TRUST_SERVER_CERTIFICATE`: Specifies whether to use TLS to encrypt the target database connection and bypass walking the certificate chain to validate trust. Must be either _yes_ or _no_.
+- `MSSQL_TARGET_ENCRYPT_CONNECTION`: Specifies if SQL encryption should be used for the target database connection. Must be either _true_ or _false_.
+- `MSSQL_TRUST_SERVER_CERTIFICATE`: Specifies whether to use TLS to encrypt the target database connection and bypass walking the certificate chain to validate trust. Must be either _true_ or _false_.
+- `DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT`: Configures whether to hide or show data associated with test clients by default. Must be either _true_ or _false_.
 
 The dashboard is exposed at port 5000 by default. For example, to launch a dashboard listening at _http://localhost:80_, which connects to a MSSQL server with the above exemplary credentials the following command may be used:
 
 ```bash
-docker run --rm                             \
-	-p 80:5000                              \
-	-e MSSQL_HOSTNAME='10.8.16.44'          \
-	-e MSSQL_PORT='1433'                    \
-	-e MSSQL_DB='bkb-data'                  \
-	-e MSSQL_USER='admin'                   \
-	-e MSSQL_PASSWORD='pa$$w0rd554'         \
-	-e MSSQL_TARGET_ENCRYPT_CONNECTION='no' \
-	-e MSSQL_TRUST_SERVER_CERTIFICATE='yes' \
+docker run --rm                                \
+	-p 80:5000                                 \
+	-e MSSQL_HOSTNAME='10.8.16.44'             \
+	-e MSSQL_PORT='1433'                       \
+	-e MSSQL_DB='bkb-data'                     \
+	-e MSSQL_USER='admin'                      \
+	-e MSSQL_PASSWORD='pa$$w0rd554'            \
+	-e MSSQL_TARGET_ENCRYPT_CONNECTION='false' \
+	-e MSSQL_TRUST_SERVER_CERTIFICATE='true'   \
 	"ghcr.io/js-soft/nmshd-bkb-data-dashboard:latest"
 ```
 
