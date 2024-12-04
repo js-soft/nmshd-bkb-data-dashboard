@@ -46,6 +46,7 @@ disable = [
     'broad-exception-raised',
     'invalid-name',
     'fixme',
+    'global-statement',
 ]
 
 [tool.mypy]

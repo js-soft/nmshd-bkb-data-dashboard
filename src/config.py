@@ -1,17 +1,31 @@
 from __future__ import annotations
 
-from typing import Literal
+import sys
+from typing import Any
 
+from pydantic import SecretStr, ValidationError, field_validator
 from pydantic_settings import BaseSettings
-from pydantic import Field, SecretStr, field_validator
 
-APP_SETTINGS: Config
+_config: _Config
 
 
-class Config(BaseSettings):
-    # XXX: Kann ich die Feldnamen klein schreiben?
+def init(**kwargs) -> _Config:
+    global _config
+    try:
+        _config = _Config(**kwargs)
+        return get()
+    except ValidationError as err:
+        print(err, file=sys.stderr)
+        sys.exit(1)
+
+
+def get() -> _Config:
+    return _config
+
+
+class _Config(BaseSettings):
     MSSQL_HOSTNAME: str
-    MSSQL_PORT: str
+    MSSQL_PORT: int
     MSSQL_USER: str
     MSSQL_PASSWORD: SecretStr
     MSSQL_DB: str
@@ -20,48 +34,43 @@ class Config(BaseSettings):
 
     DASHBOARD_HOSTNAME: str
     DASHBOARD_PORT: int
-    DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT: bool
 
-    @field_validator("MSSQL_TARGET_ENCRYPT_CONNECTION", mode="before")
-    def validate_mssql_target_encrypt_connection(cls, value: str) -> bool:
-        return Config.validate_true_false_boolean("MSSQL_TARGET_ENCRYPT_CONNECTION", value)
 
-    @field_validator("MSSQL_TRUST_SERVER_CERTIFICATE", mode="before")
-    def validate_mssql_trust_server_certificate(cls, value: str) -> bool:
-        return Config.validate_true_false_boolean("MSSQL_TRUST_SERVER_CERTIFICATE", value)
+    @field_validator(
+        "MSSQL_TARGET_ENCRYPT_CONNECTION",
+        "MSSQL_TRUST_SERVER_CERTIFICATE",
+        mode="before",
+    )
+    @classmethod
+    def validate_booleans(cls, value: str, ctx) -> bool:
+        return _Config.validate_true_false_boolean(value, ctx.field_name)
 
-    @field_validator("MSSQL_PORT", mode="before")
-    def validate_tcp_port(cls, value: str) -> int:
-        return Config.validate_port("MSSQL_PORT", value)
-
-    @field_validator("DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT", mode="before")
-    def validate_dashboard_hist_test_clients_default(cls, value: str) -> bool:
-        return Config.validate_true_false_boolean("DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT", value)
-
-    @field_validator("DASHBOARD_PORT", mode="before")
-    def validate_tcp_port(cls, value: str) -> int:
-        return Config.validate_port("DASHBOARD_PORT", value)
+    @field_validator(
+        "MSSQL_PORT",
+        "DASHBOARD_PORT",
+        mode="before",
+    )
+    @classmethod
+    def validate_ports(cls, value: str, ctx) -> int:
+        return _Config.validate_port(value, ctx.field_name)
 
     @staticmethod
-    def validate_port(fieldname: str, value: str) -> int:
-        errmsg = f"Environment variable '{fieldname}' must be an integer in the range 1-65535."
+    def validate_port(value: str, fieldname: str | Any) -> int:
+        errmsg = f"Environment variable '{fieldname}' must be an integer in the range 1-65535, received '{value}'."
         try:
             port = int(value)
-        except ValueError as _:
-            raise ValueError(errmsg) # XXX: raise ... from ????
-        if not (1 <= port <= 65535):
+        except ValueError as e:
+            raise ValueError(errmsg) from e
+        if not 1 <= port <= 65535:
             raise ValueError(errmsg)
         return port
 
-
     @staticmethod
-    def validate_true_false_boolean(fieldname: str, value: str) -> bool:
-        # XXX: muss ich hier value auch boolean zulassen, falls die Klasse explizit instanziiert wird? dito oben
+    def validate_true_false_boolean(value: str | Any, fieldname: str) -> bool:
+        if isinstance(value, bool):
+            return value
         if value == "true":
             return True
         if value == "false":
             return False
-        raise ValueError(
-            f"Environment variable '{fieldname}' must be set to either 'true' or 'false'."
-        )
-
+        raise ValueError(f"Environment variable '{fieldname}' must be set to either 'true' or 'false'.")

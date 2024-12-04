@@ -3,9 +3,9 @@ from typing import Any
 
 import dash
 import plotly.graph_objs as go
-from dash import Dash, Input, Output, dcc, html
-from flask import render_template, request, Flask, redirect
 import sqlalchemy
+from dash import Dash, Input, Output, dcc, html
+from flask import Flask, redirect, render_template, request
 
 from src import network
 from src import plotly_plots as plots
