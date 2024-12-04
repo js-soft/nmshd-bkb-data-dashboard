@@ -1,6 +1,7 @@
 from typing import Literal, get_args
-
+import re
 import pandas as pd
+from src import config
 
 ClientType = Literal["App", "Connector"]
 DeviceType = Literal["Android", "SSE", "Apple", "Unknown"]
@@ -70,12 +71,10 @@ def bb_client_type_from_id(client_id: str) -> ClientType:
     return "Connector"
 
 
-def is_test_client(client_id: str) -> bool:
-    return client_id.startswith("test") or client_id in {
-        "hosted-test-connectors",
-        "hcm-demo",
-        "dev",
-    }
+def is_test_client(client_id: str, pattern: re.Pattern | None = None) -> bool:
+    if pattern is None:
+        pattern = config.get().DASHBOARD_TEST_CLIENTS_PATTERN
+    return re.fullmatch(pattern, client_id) is not None
 
 
 def seconds_to_human_readable(seconds):
