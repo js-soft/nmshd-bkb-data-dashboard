@@ -16,15 +16,16 @@ Releases are available as Docker images in the [project's Github container regis
 The dashboard is exposed at port 5000 by default. For example, to launch a dashboard listening at _http://localhost:80_, which connects to a MSSQL server with the above exemplary credentials the following command may be used:
 
 ```bash
-docker run --rm                                \
-	-p 80:5000                                 \
-	-e MSSQL_HOSTNAME='10.8.16.44'             \
-	-e MSSQL_PORT='1433'                       \
-	-e MSSQL_DB='bkb-data'                     \
-	-e MSSQL_USER='admin'                      \
-	-e MSSQL_PASSWORD='pa$$w0rd554'            \
-	-e MSSQL_TARGET_ENCRYPT_CONNECTION='false' \
-	-e MSSQL_TRUST_SERVER_CERTIFICATE='true'   \
+docker run --rm                                   \
+	-p 80:5000                                    \
+	-e MSSQL_HOSTNAME='10.8.16.44'                \
+	-e MSSQL_PORT='1433'                          \
+	-e MSSQL_DB='bkb-data'                        \
+	-e MSSQL_USER='admin'                         \
+	-e MSSQL_PASSWORD='pa$$w0rd554'               \
+	-e MSSQL_TARGET_ENCRYPT_CONNECTION='false'    \
+	-e MSSQL_TRUST_SERVER_CERTIFICATE='true'      \
+    -e DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT='true' \
 	"ghcr.io/js-soft/nmshd-bkb-data-dashboard:latest"
 ```
 
