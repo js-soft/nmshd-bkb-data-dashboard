@@ -12,6 +12,8 @@ networkx = "^3.3"
 dash = "^2.18.1"
 sqlalchemy = "^2.0.36"
 pyodbc = "^5.2.0"
+pydantic = "^2.10.3"
+pydantic-settings = "^2.6.1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.12.0"
@@ -22,6 +24,10 @@ jupyter = "^1.1.1"
 pymssql = "^2.3.1"
 ipykernel = "^6.29.5"
 plotnine = "^0.13.6"
+pylint-pydantic = "^0.3.3"
+
+[tool.pylint.main]
+load-plugins = "pylint_pydantic"
 
 [tool.pylint.messages_control]
 max-line-length = 120
@@ -44,6 +50,7 @@ disable = [
 
 [tool.mypy]
 disable_error_code = ["import-untyped"]
+plugins = ['pydantic.mypy']
 
 [tool.black]
 line-length = 120

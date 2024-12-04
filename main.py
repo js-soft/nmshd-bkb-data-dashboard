@@ -46,6 +46,12 @@ def create_app() -> Flask:
 
 if __name__ == "__main__":
     debug = os.getenv("DEBUG") is not None
+    os.environ["MSSQL_HOSTNAME"] = "localhost"
+    os.environ["MSSQL_PORT"] = os.environ.get("MSSQL_PORT", "1433")
+    os.environ["MSSQL_USER"] = "sa"
+    os.environ["MSSQL_PASSWORD"] = "Bohemian_Rhapsody2024"
+    os.environ["MSSQL_TARGET_ENCRYPT_CONNECTION"] = "false"
+    os.environ["MSSQL_TRUST_SERVER_CERTIFICATE"] = "true"
     dashboard_hostname = os.getenv("DASHBOARD_HOSTNAME", "localhost")
     dashboard_port = int(os.getenv("DASHBOARD_PORT", "5000"))
     app = create_app()
