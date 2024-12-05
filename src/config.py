@@ -4,11 +4,10 @@ import re
 import sys
 from typing import Any
 
-from pydantic import SecretStr, ValidationError, field_validator
+from pydantic import Field, SecretStr, ValidationError, field_validator
 from pydantic_settings import BaseSettings
 
 _config: _Config
-
 
 # TODO: Add proper type support
 def init(**kwargs) -> _Config:
@@ -27,7 +26,7 @@ def get() -> _Config:
 
 class _Config(BaseSettings):
     MSSQL_HOSTNAME: str
-    MSSQL_PORT: int
+    MSSQL_PORT: int = Field(ge=1, le=65535)
     MSSQL_USER: str
     MSSQL_PASSWORD: SecretStr
     MSSQL_DB: str
@@ -35,7 +34,7 @@ class _Config(BaseSettings):
     MSSQL_TRUST_SERVER_CERTIFICATE: bool
 
     DASHBOARD_HOSTNAME: str
-    DASHBOARD_PORT: int
+    DASHBOARD_PORT: int = Field(ge=1, le=65535)
     DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT: bool
     DASHBOARD_TEST_CLIENTS_REGEX: re.Pattern
     DASHBOARD_APP_CLIENTS_REGEX: re.Pattern
@@ -51,15 +50,6 @@ class _Config(BaseSettings):
         return _Config.validate_true_false_boolean(value, ctx.field_name)
 
     @field_validator(
-        "MSSQL_PORT",
-        "DASHBOARD_PORT",
-        mode="before",
-    )
-    @classmethod
-    def validate_ports(cls, value: str, ctx) -> int:
-        return _Config.validate_port(value, ctx.field_name)
-
-    @field_validator(
         "DASHBOARD_TEST_CLIENTS_REGEX",
         "DASHBOARD_APP_CLIENTS_REGEX",
         mode="before",
@@ -67,17 +57,6 @@ class _Config(BaseSettings):
     @classmethod
     def validate_regexs(cls, value: str, ctx) -> re.Pattern:
         return _Config.validate_regex(value, ctx.field_name)
-
-    @staticmethod
-    def validate_port(value: str, fieldname: str | Any) -> int:
-        errmsg = f"Environment variable '{fieldname}' must be an integer in the range 1-65535, received '{value}'."
-        try:
-            port = int(value)
-        except ValueError as e:
-            raise ValueError(errmsg) from e
-        if not 1 <= port <= 65535:
-            raise ValueError(errmsg)
-        return port
 
     @staticmethod
     def validate_true_false_boolean(value: str | Any, fieldname: str) -> bool:
