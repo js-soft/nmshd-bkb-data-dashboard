@@ -1,6 +1,9 @@
+import re
 from typing import Literal, get_args
 
 import pandas as pd
+
+from src import config
 
 ClientType = Literal["App", "Connector"]
 DeviceType = Literal["Android", "SSE", "Apple", "Unknown"]
@@ -61,7 +64,8 @@ bb_datawallet_modification_collections = [
 
 
 def is_app_client(client_id: str) -> bool:
-    return client_id == "bird-wallet"
+    pattern = config.get().DASHBOARD_APP_CLIENTS_REGEX
+    return re.fullmatch(pattern, client_id) is not None
 
 
 def bb_client_type_from_id(client_id: str) -> ClientType:
@@ -71,11 +75,8 @@ def bb_client_type_from_id(client_id: str) -> ClientType:
 
 
 def is_test_client(client_id: str) -> bool:
-    return client_id.startswith("test") or client_id in {
-        "hosted-test-connectors",
-        "hcm-demo",
-        "dev",
-    }
+    pattern = config.get().DASHBOARD_TEST_CLIENTS_REGEX
+    return re.fullmatch(pattern, client_id) is not None
 
 
 def seconds_to_human_readable(seconds):

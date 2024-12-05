@@ -6,30 +6,27 @@ import sqlalchemy
 from flask import Flask
 from sqlalchemy.dialects import mssql
 
+from src import config
 from src.dashboard import DashboardApp
 
 # See https://stackoverflow.com/questions/71082494.
 filterwarnings("ignore", category=UserWarning, message=".*pandas only supports SQLAlchemy connectable.*")
 
 
-def create_app() -> Flask:
-    mssql_hostname = os.getenv("MSSQL_HOSTNAME")
-    mssql_port = os.getenv("MSSQL_PORT")
-    mssql_user = os.getenv("MSSQL_USER")
-    mssql_password = os.getenv("MSSQL_PASSWORD")
-    mssql_database = os.getenv("MSSQL_DB")
-    mssql_target_encrypt_connection = os.getenv("MSSQL_TARGET_ENCRYPT_CONNECTION", "no")
-    mssql_trust_server_certificate = os.getenv("MSSQL_TRUST_SERVER_CERTIFICATE", "yes")
+def create_app(*, init_config_from_env=True) -> Flask:
+    if init_config_from_env:
+        config.init()
+    cfg = config.get()
 
     def make_conn():
         return pyodbc.connect(
-            f"SERVER={mssql_hostname},{mssql_port};"
-            f"UID={mssql_user};"
-            f"PWD={mssql_password};"
-            f"DATABASE={mssql_database};"
+            f"SERVER={cfg.MSSQL_HOSTNAME},{cfg.MSSQL_PORT};"
+            f"UID={cfg.MSSQL_USER};"
+            f"PWD={cfg.MSSQL_PASSWORD.get_secret_value()};"
+            f"DATABASE={cfg.MSSQL_DB};"
             "Driver=ODBC Driver 18 for SQL Server;"
-            f"TargetEncryptConnection={mssql_target_encrypt_connection};"
-            f"TrustServerCertificate={mssql_trust_server_certificate};",
+            f"TargetEncryptConnection={"yes" if cfg.MSSQL_TARGET_ENCRYPT_CONNECTION else "no"};"
+            f"TrustServerCertificate={"yes" if cfg.MSSQL_TRUST_SERVER_CERTIFICATE else "no"};",
             readonly=True,
         )
 
@@ -44,13 +41,27 @@ def create_app() -> Flask:
     return DashboardApp(cnxn_pool)._app.server
 
 
-if __name__ == "__main__":
+def main():
     debug = os.getenv("DEBUG") is not None
-    dashboard_hostname = os.getenv("DASHBOARD_HOSTNAME", "localhost")
-    dashboard_port = int(os.getenv("DASHBOARD_PORT", "5000"))
-    app = create_app()
+    cfg = config.init(
+        MSSQL_HOSTNAME="localhost",
+        MSSQL_PORT=int(os.environ.get("MSSQL_PORT", "1433")),
+        MSSQL_USER="sa",
+        MSSQL_PASSWORD="Bohemian_Rhapsody2024",
+        MSSQL_TARGET_ENCRYPT_CONNECTION="false",
+        MSSQL_TRUST_SERVER_CERTIFICATE="true",
+        DASHBOARD_HOSTNAME=os.environ.get("DASHBOARD_HOSTNAME", "localhost"),
+        DASHBOARD_PORT=int(os.environ.get("DASHBOARD_PORT", "5000")),
+        DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT=os.environ.get("DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT", "false"),
+    )
+
+    app = create_app(init_config_from_env=False)
     app.run(
         debug=debug,
-        host=dashboard_hostname,
-        port=dashboard_port,
+        host=cfg.DASHBOARD_HOSTNAME,
+        port=cfg.DASHBOARD_PORT,
     )
+
+
+if __name__ == "__main__":
+    main()

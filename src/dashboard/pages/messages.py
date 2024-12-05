@@ -1,6 +1,7 @@
 import dash
 from dash import dcc, html
 
+from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -15,7 +16,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="num_sent_messages_per_client$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -40,7 +41,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="num_received_messages_per_client$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -65,7 +66,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="num_recipients_per_sender_client_type$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -92,7 +93,7 @@ layout = html.Div(
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -119,7 +120,7 @@ layout = html.Div(
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
