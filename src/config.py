@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import re
 import sys
 from typing import Any
-import re
+
 from pydantic import SecretStr, ValidationError, field_validator
 from pydantic_settings import BaseSettings
 
