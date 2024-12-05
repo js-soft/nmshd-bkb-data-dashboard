@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from typing import Any
 
@@ -36,7 +37,8 @@ class _Config(BaseSettings):
     DASHBOARD_HOSTNAME: str
     DASHBOARD_PORT: int
     DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT: bool
-
+    DASHBOARD_TEST_CLIENTS_REGEX: re.Pattern
+    DASHBOARD_APP_CLIENTS_REGEX: re.Pattern
 
     @field_validator(
         "MSSQL_TARGET_ENCRYPT_CONNECTION",
@@ -56,6 +58,15 @@ class _Config(BaseSettings):
     @classmethod
     def validate_ports(cls, value: str, ctx) -> int:
         return _Config.validate_port(value, ctx.field_name)
+
+    @field_validator(
+        "DASHBOARD_TEST_CLIENTS_REGEX",
+        "DASHBOARD_APP_CLIENTS_REGEX",
+        mode="before",
+    )
+    @classmethod
+    def validate_regexs(cls, value: str, ctx) -> re.Pattern:
+        return _Config.validate_regex(value, ctx.field_name)
 
     @staticmethod
     def validate_port(value: str, fieldname: str | Any) -> int:
@@ -77,3 +88,10 @@ class _Config(BaseSettings):
         if value == "false":
             return False
         raise ValueError(f"Environment variable '{fieldname}' must be set to either 'true' or 'false'.")
+
+    @staticmethod
+    def validate_regex(value: str | Any, fieldname: str) -> re.Pattern:
+        try:
+            return re.compile(value)
+        except Exception as e:
+            raise ValueError(f"Environment variable '{fieldname}' must be a valid regex.") from e
