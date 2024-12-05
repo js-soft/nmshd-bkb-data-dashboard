@@ -49,5 +49,5 @@ The dashboard server uses multi-process load balancing by default. The number of
 3. (Optional) A local backbone mssql server and database can be bootstrapped from a local _.bacpac_ backup file using _dev/bootstrap-mssql.docker-compose.yml_. Check the file for information on what to configure.
 
 4. Start the dashboard server locally via `python main.py`. The hostname and port default to _localhost_ and _5000_, respectively. To override these defaults use the environment variables:
-    - `DASHBOARD_HOSTNAME`: Hostname or IP-address of dashboard server
-    - `DASHBOARD_PORT`: Port of dashboard server
+    - `DEV_DASHBOARD_HOSTNAME`: Hostname or IP-address of dashboard server
+    - `DEV_DASHBOARD_PORT`: Port of dashboard server

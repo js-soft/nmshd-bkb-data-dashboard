@@ -50,18 +50,18 @@ def main():
         MSSQL_PASSWORD="Bohemian_Rhapsody2024",
         MSSQL_TARGET_ENCRYPT_CONNECTION="false",
         MSSQL_TRUST_SERVER_CERTIFICATE="true",
-        DASHBOARD_HOSTNAME=os.environ.get("DASHBOARD_HOSTNAME", "localhost"),
-        DASHBOARD_PORT=int(os.environ.get("DASHBOARD_PORT", "5000")),
         DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT=os.environ.get("DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT", "false"),
         DASHBOARD_TEST_CLIENTS_REGEX=os.environ.get("DASHBOARD_TEST_CLIENTS_REGEX"),
         DASHBOARD_APP_CLIENTS_REGEX=os.environ.get("DASHBOARD_APP_CLIENTS_REGEX"),
+        DEV_DASHBOARD_HOSTNAME=os.environ.get("DEV_DASHBOARD_HOSTNAME", "localhost"),
+        DEV_DASHBOARD_PORT=int(os.environ.get("DEV_DASHBOARD_PORT", "5000")),
     )
 
     app = create_app(init_config_from_env=False)
     app.run(
         debug=debug,
-        host=cfg.DASHBOARD_HOSTNAME,
-        port=cfg.DASHBOARD_PORT,
+        host=cfg.DEV_DASHBOARD_HOSTNAME,
+        port=cfg.DEV_DASHBOARD_PORT,
     )
 
 

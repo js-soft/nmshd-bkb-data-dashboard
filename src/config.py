@@ -33,11 +33,12 @@ class _Config(BaseSettings):
     MSSQL_TARGET_ENCRYPT_CONNECTION: bool
     MSSQL_TRUST_SERVER_CERTIFICATE: bool
 
-    DASHBOARD_HOSTNAME: str
-    DASHBOARD_PORT: int = Field(ge=1, le=65535)
     DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT: bool
     DASHBOARD_TEST_CLIENTS_REGEX: re.Pattern
     DASHBOARD_APP_CLIENTS_REGEX: re.Pattern
+
+    DEV_DASHBOARD_HOSTNAME: str | None = None
+    DEV_DASHBOARD_PORT: int | None = Field(None, ge=1, le=65535)
 
     @field_validator(
         "MSSQL_TARGET_ENCRYPT_CONNECTION",
