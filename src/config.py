@@ -94,4 +94,4 @@ class _Config(BaseSettings):
         try:
             return re.compile(value)
         except Exception as e:
-            raise ValueError(f"Environment variable '{fieldname}' must be a valid regex") from e
+            raise ValueError(f"Environment variable '{fieldname}' must be a valid regex.") from e
