@@ -100,6 +100,13 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
         return no_data()
 
     df = df.filter(["ClientId", "ClientType", "NumIdentities"])
+    # TODO: We have to set the category orders explicitly by sorting our values
+    #       manually, instead of using plotly's xaxis_categoryorder layout
+    #       option. plotly.js seems to cache data between updates, leading to
+    #       ghost categories being displayed. See
+    #       https://github.com/streamlit/streamlit/issues/5902 for a similar
+    #       issue.
+    df = df.sort_values(by=["NumIdentities"], ascending=False)
 
     p = px.bar(
         df,
@@ -119,11 +126,9 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
             "ClientType": False,
         },
         color_discrete_map=client_type_colmap,
+        category_orders={"ClientId": df["ClientId"]},
     )
 
-    p.update_layout(
-        xaxis_categoryorder="total descending",
-    )
     return p
 
 
@@ -139,6 +144,7 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
         return no_data()
 
     df = df.filter(["NumMessages", "SenderClientId", "SenderClientType"])
+    df = df.sort_values(by=["NumMessages"], ascending=False)
 
     p = px.bar(
         df,
@@ -158,11 +164,9 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
             "SenderClientType": False,
         },
         color_discrete_map=client_type_colmap,
+        category_orders={"SenderClientId": df["SenderClientId"]},
     )
 
-    p.update_layout(
-        xaxis_categoryorder="total descending",
-    )
     return p
 
 
@@ -178,6 +182,7 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
         return no_data()
 
     df = df.filter(["NumMessages", "RecipientClientId", "RecipientClientType"])
+    df = df.sort_values(by=["NumMessages"], ascending=False)
 
     p = px.bar(
         df,
@@ -197,11 +202,9 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
             "RecipientClientType": False,
         },
         color_discrete_map=client_type_colmap,
+        category_orders={"RecipientClientId": df["RecipientClientId"]},
     )
 
-    p.update_layout(
-        xaxis_categoryorder="total descending",
-    )
     return p
 
 
@@ -474,8 +477,7 @@ def sync_errors(df: pd.DataFrame) -> go.Figure:
             "ErrorCode": df["ErrorCode"].cat.categories,
         },
     )
-    p.update_layout(
-    )
+    p.update_layout()
     return p
 
 
