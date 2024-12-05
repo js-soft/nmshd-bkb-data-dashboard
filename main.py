@@ -43,7 +43,6 @@ def create_app(*, init_config_from_env=True) -> Flask:
 
 def main():
     debug = os.getenv("DEBUG") is not None
-    # XXX: richtige Typen übergeben
     cfg = config.init(
         MSSQL_HOSTNAME="localhost",
         MSSQL_PORT=int(os.environ.get("MSSQL_PORT", "1433")),

@@ -9,7 +9,7 @@ from pydantic_settings import BaseSettings
 _config: _Config
 
 
-# XXX: Typisierung
+# TODO: Add proper type support
 def init(**kwargs) -> _Config:
     global _config
     try:
