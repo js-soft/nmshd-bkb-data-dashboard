@@ -53,6 +53,8 @@ def main():
         DASHBOARD_HOSTNAME=os.environ.get("DASHBOARD_HOSTNAME", "localhost"),
         DASHBOARD_PORT=int(os.environ.get("DASHBOARD_PORT", "5000")),
         DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT=os.environ.get("DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT", "false"),
+        DASHBOARD_TEST_CLIENTS_REGEX=os.environ.get("DASHBOARD_TEST_CLIENTS_REGEX"),
+        DASHBOARD_APP_CLIENTS_REGEX=os.environ.get("DASHBOARD_APP_CLIENTS_REGEX"),
     )
 
     app = create_app(init_config_from_env=False)
