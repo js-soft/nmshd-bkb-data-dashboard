@@ -62,7 +62,8 @@ bb_datawallet_modification_collections = [
 
 
 def is_app_client(client_id: str) -> bool:
-    return client_id == "bird-wallet"
+    pattern = config.get().DASHBOARD_APP_CLIENT_TYPE_REGEX
+    return re.fullmatch(pattern, client_id) is not None
 
 
 def bb_client_type_from_id(client_id: str) -> ClientType:
@@ -71,9 +72,8 @@ def bb_client_type_from_id(client_id: str) -> ClientType:
     return "Connector"
 
 
-def is_test_client(client_id: str, pattern: re.Pattern | None = None) -> bool:
-    if pattern is None:
-        pattern = config.get().DASHBOARD_TEST_CLIENTS_PATTERN
+def is_test_client(client_id: str) -> bool:
+    pattern = config.get().DASHBOARD_TEST_CLIENTS_REGEX
     return re.fullmatch(pattern, client_id) is not None
 
 
