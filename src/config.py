@@ -38,7 +38,7 @@ class _Config(BaseSettings):
     DASHBOARD_PORT: int
     DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT: bool
     DASHBOARD_TEST_CLIENTS_REGEX: re.Pattern
-    DASHBOARD_APP_CLIENT_TYPE_REGEX: re.Pattern
+    DASHBOARD_APP_CLIENTS_REGEX: re.Pattern
 
     @field_validator(
         "MSSQL_TARGET_ENCRYPT_CONNECTION",
@@ -61,7 +61,7 @@ class _Config(BaseSettings):
 
     @field_validator(
         "DASHBOARD_TEST_CLIENTS_REGEX",
-        "DASHBOARD_APP_CLIENT_TYPE_REGEX",
+        "DASHBOARD_APP_CLIENTS_REGEX",
         mode="before",
     )
     @classmethod

@@ -64,7 +64,7 @@ bb_datawallet_modification_collections = [
 
 
 def is_app_client(client_id: str) -> bool:
-    pattern = config.get().DASHBOARD_APP_CLIENT_TYPE_REGEX
+    pattern = config.get().DASHBOARD_APP_CLIENTS_REGEX
     return re.fullmatch(pattern, client_id) is not None
 
 

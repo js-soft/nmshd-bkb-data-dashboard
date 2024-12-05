@@ -14,7 +14,7 @@ Releases are available as Docker images in the [project's Github container regis
 - `DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT`: Configures whether to hide or show data associated with test clients by default. Must be either _true_ or _false_.
 - `DASHBOARD_TEST_CLIENTS_REGEX`: Configures which client ids to consider test clients (Match of the regex to the client id --> test client). Note: Regular expressions have to be in python syntax (see https://docs.python.org/3/library/re.html for more details) and the **entire** client id has to be match (e.g. if one wants to match all client ids with the prefix _test-_, one valid pattern would be `test-.*`).
 # TODO: Rewrite for app pattern
-- `DASHBOARD_APP_CLIENT_TYPE_REGEX`: Configures which client ids to consider app clients (Match of the regex to the client id --> app client). Note: Regular expressions have to be in python syntax (see https://docs.python.org/3/library/re.html for more details) and the **entire** client id has to be match (e.g. if one wants to match all client ids with the prefix _test-_, one valid pattern would be `test-.*`).
+- `DASHBOARD_APP_CLIENTS_REGEX`: Configures which client ids to consider app clients (Match of the regex to the client id --> app client). Note: Regular expressions have to be in python syntax (see https://docs.python.org/3/library/re.html for more details) and the **entire** client id has to be match (e.g. if one wants to match all client ids with the prefix _test-_, one valid pattern would be `test-.*`).
 
 The dashboard is exposed at port 5000 by default. For example, to launch a dashboard listening at _http://localhost:80_, which connects to a MSSQL server with the above exemplary credentials the following command may be used:
 
@@ -30,7 +30,7 @@ docker run --rm                                 		\
 	-e MSSQL_TRUST_SERVER_CERTIFICATE='true'      		\
     -e DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT='true' 		\
 	-e DASHBOARD_TEST_CLIENTS_REGEX='test-.*|.*-dev'  	\
-	-e DASHBOARD_APP_CLIENT_TYPE_REGEX='test-.*'  		\
+	-e DASHBOARD_APP_CLIENTS_REGEX='test-.*'  		\
 	"ghcr.io/js-soft/nmshd-bkb-data-dashboard:latest"
 ```
 
