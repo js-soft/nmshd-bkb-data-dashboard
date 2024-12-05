@@ -12,25 +12,24 @@ Releases are available as Docker images in the [project's Github container regis
 - `MSSQL_TARGET_ENCRYPT_CONNECTION`: Specifies if SQL encryption should be used for the target database connection. Must be either _true_ or _false_.
 - `MSSQL_TRUST_SERVER_CERTIFICATE`: Specifies whether to use TLS to encrypt the target database connection and bypass walking the certificate chain to validate trust. Must be either _true_ or _false_.
 - `DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT`: Configures whether to hide or show data associated with test clients by default. Must be either _true_ or _false_.
-- `DASHBOARD_TEST_CLIENTS_REGEX`: Configures which client ids to consider test clients (Match of the regex to the client id --> test client). Note: Regular expressions have to be in python syntax (see https://docs.python.org/3/library/re.html for more details) and the **entire** client id has to be match (e.g. if one wants to match all client ids with the prefix _test-_, one valid pattern would be `test-.*`).
-# TODO: Rewrite for app pattern
-- `DASHBOARD_APP_CLIENTS_REGEX`: Configures which client ids to consider app clients (Match of the regex to the client id --> app client). Note: Regular expressions have to be in python syntax (see https://docs.python.org/3/library/re.html for more details) and the **entire** client id has to be match (e.g. if one wants to match all client ids with the prefix _test-_, one valid pattern would be `test-.*`).
+- `DASHBOARD_TEST_CLIENTS_REGEX`: Configures which client IDs to consider test clients using a [regular expression](https://docs.python.org/3/library/re.html#regular-expression-syntax). For example, to match the client ID _dev_ and all other client IDs which start with the prefix _test-_ use the regular expression _dev|test-.*_.
+- `DASHBOARD_APP_CLIENTS_REGEX`: Configures which client IDs to consider app clients using a [regular expression](https://docs.python.org/3/library/re.html#regular-expression-syntax). For example, to match  the client ID _app-dev_ and all other client IDs which start with the prefix _app-_ use the regular expression _app-dev|app-.*_. Client IDs not matched by the pattern are considered connector clients.
 
 The dashboard is exposed at port 5000 by default. For example, to launch a dashboard listening at _http://localhost:80_, which connects to a MSSQL server with the above exemplary credentials the following command may be used:
 
 ```bash
-docker run --rm                                 		\
-	-p 80:5000                                    		\
-	-e MSSQL_HOSTNAME='10.8.16.44'                		\
-	-e MSSQL_PORT='1433'                          		\
-	-e MSSQL_DB='bkb-data'                        		\
-	-e MSSQL_USER='admin'                         		\
-	-e MSSQL_PASSWORD='pa$$w0rd554'               		\
-	-e MSSQL_TARGET_ENCRYPT_CONNECTION='false'    		\
-	-e MSSQL_TRUST_SERVER_CERTIFICATE='true'      		\
-    -e DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT='true' 		\
-	-e DASHBOARD_TEST_CLIENTS_REGEX='test-.*|.*-dev'  	\
-	-e DASHBOARD_APP_CLIENTS_REGEX='test-.*'  		\
+docker run --rm                                     \
+	-p 80:5000                                      \
+	-e MSSQL_HOSTNAME='10.8.16.44'                  \
+	-e MSSQL_PORT='1433'                            \
+	-e MSSQL_DB='bkb-data'                          \
+	-e MSSQL_USER='admin'                           \
+	-e MSSQL_PASSWORD='pa$$w0rd554'                 \
+	-e MSSQL_TARGET_ENCRYPT_CONNECTION='false'      \
+	-e MSSQL_TRUST_SERVER_CERTIFICATE='true'        \
+	-e DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT='true'   \
+	-e DASHBOARD_TEST_CLIENTS_REGEX='dev|test-.*'   \
+	-e DASHBOARD_APP_CLIENTS_REGEX='app-dev|app-.*' \
 	"ghcr.io/js-soft/nmshd-bkb-data-dashboard:latest"
 ```
 
