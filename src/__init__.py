@@ -1,6 +1,8 @@
-from typing import Literal, get_args
 import re
+from typing import Literal, get_args
+
 import pandas as pd
+
 from src import config
 
 ClientType = Literal["App", "Connector"]
