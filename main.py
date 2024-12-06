@@ -12,6 +12,7 @@ from src.dashboard import DashboardApp
 # See https://stackoverflow.com/questions/71082494.
 filterwarnings("ignore", category=UserWarning, message=".*pandas only supports SQLAlchemy connectable.*")
 
+# XXX: https://dash.plotly.com/sharing-data-between-callbacks
 
 def create_app(*, init_config_from_env=True) -> Flask:
     if init_config_from_env:
