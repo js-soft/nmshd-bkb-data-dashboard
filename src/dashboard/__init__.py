@@ -1,13 +1,13 @@
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, Literal
 
 import dash
 import plotly.graph_objs as go
 import sqlalchemy
-from dash import Dash, Input, Output, dcc, html
+from dash import Dash, Input, Output, dcc, html, ALL
 from flask import Flask, redirect, render_template, request
 
-from src import network
+from src import config, network
 from src import plotly_plots as plots
 from src import queries
 
@@ -55,6 +55,13 @@ class DashboardApp:
                         )
                         for page in dash.page_registry.values()
                     ],
+                ),
+                dcc.RadioItems(
+                    id="hide-test-clients-radio-group",
+                    options=[{"label": "Hide", "value": "hide"}, {"label": "Show", "value": "show"}],
+                    # XXX: An Zustand der einzelnen Checkboxen koppeln
+                    value="hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show",
+                    inline=True,
                 ),
                 html.Div(dash.page_container, className="page-container"),
             ]
@@ -160,8 +167,10 @@ class DashboardApp:
             return plots.type_of_datawallet_modifications(df)
 
         @self._app.callback(
-            Output("size_of_datawallet_modifications$graph", "figure"),
-            Input("size_of_datawallet_modifications$hideTestClients", "value"),
+            # Output("size_of_datawallet_modifications$graph", "figure"),
+            # Input("size_of_datawallet_modifications$hideTestClients", "value"),
+            Output({"type": "graph", "plot": "size-of-datawallet-modifications"}, "figure"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "size-of-datawallet-modifications"}, "value"),
         )
         def size_of_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -170,8 +179,9 @@ class DashboardApp:
             return plots.size_of_datawallet_modifications(df)
 
         @self._app.callback(
-            Output("num_datawallet_modifications$graph", "figure"),
-            Input("num_datawallet_modifications$hideTestClients", "value"),
+            Output({"type": "graph", "plot": "num-datawallet-modifications"}, "figure"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications"}, "value"),
+            # Input({"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications", "index": 0}, "value"),
         )
         def num_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -421,6 +431,45 @@ class DashboardApp:
                 df = queries.rlt_validity_period(cnxn, hide)
             return plots.rlt_validity_period(df)
 
+        @self._app.callback(
+            Output("hide-test-clients-radio-group", "value"),
+            Output({"type": "hide-test-clients-checkbox","plot": ALL}, "value"),
+            Input("hide-test-clients-radio-group", "value"),
+            Input({"type": "hide-test-clients-checkbox","plot": ALL}, "value"),
+        )
+        # XXX: rename
+        def foo(global_state: str | None, checkbox_states: list[list[str]]):
+            triggered_by = dash.ctx.triggered_id
+            if triggered_by == "hide-test-clients-radio-group" or triggered_by is None:
+                if global_state == "show":
+                    return ("show", [[]] * len(dash.ctx.outputs_list))
+                return ("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list))
+
+            # XXX: Nur Komponenten neu laden, die sich geändert haben. Momentan führt jede
+            #      Änderung einer Checkbox zum Neuladen aller Plots (vermutlich weil hier
+            #      für jeden Plot ein Output ausgegeben wird.)
+            num_checked = sum(len(v) != 0 for v in checkbox_states)
+            if num_checked == 0:
+                return ("show", checkbox_states)
+            if num_checked == len(checkbox_states):
+                return ("hide", checkbox_states)
+            return (None, checkbox_states)
+
+
+
+
+
+        # @self._app.callback(
+        #     Output({"type": "hide-test-clients-checkbox","plot": ALL}, "value"),
+        #     Input("hide-test-clients-radio-group", "value"),
+        # )
+        # # def foo(global_state, checkbox_states):
+        # def foo(global_state):
+        #     triggered_by = dash.ctx.triggered_id
+        #     if triggered_by == "hide-test-clients-radio-group":
+        #         if global_state is None or global_state == "show":
+        #             return [[]] * len(dash.ctx.outputs_list)
+        #         return [["hide_test_clients"]] * len(dash.ctx.outputs_list)
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)

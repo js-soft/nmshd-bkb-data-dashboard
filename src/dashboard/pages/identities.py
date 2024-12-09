@@ -41,6 +41,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id="activity_identity_creations$hideTestClients",
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
+                                    # XXX: Wird über Callback gesetzt, entfernen
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]

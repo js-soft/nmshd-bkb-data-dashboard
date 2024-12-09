@@ -14,7 +14,8 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_datawallet_modifications$hideTestClients",
+                                    # id="num_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
@@ -29,7 +30,8 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_datawallet_modifications$graph"),
+                # dcc.Graph(id="num_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-datawallet-modifications"}),
             ],
             id="num_datawallet_modifications$div",
             className="graph-div",
@@ -41,7 +43,8 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="size_of_datawallet_modifications$hideTestClients",
+                                    # id="size_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "size-of-datawallet-modifications"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
@@ -56,7 +59,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="size_of_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "size-of-datawallet-modifications"}),
             ],
             id="size_of_datawallet_modifications$div",
             className="graph-div",
