@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -16,7 +15,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "sync-errors"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -41,7 +40,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "type-of-external-events"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -66,7 +65,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "num-external-events-per-sync-run"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -91,7 +90,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "activity-external-events"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),

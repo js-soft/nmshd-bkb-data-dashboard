@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -18,7 +17,7 @@ layout = html.Div(
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -29,8 +28,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                # dcc.Graph(id="num_datawallet_modifications$graph"),
-                dcc.Graph(id={"type": "graph", "plot": "num-datawallet-modifications"}),
+                dcc.Graph(id="num_datawallet_modifications$graph"),
             ],
             id="num_datawallet_modifications$div",
             className="graph-div",
@@ -46,7 +44,7 @@ layout = html.Div(
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -57,7 +55,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id={"type": "graph", "plot": "size-of-datawallet-modifications"}),
+                dcc.Graph(id="size_of_datawallet_modifications$graph"),
             ],
             id="size_of_datawallet_modifications$div",
             className="graph-div",
@@ -71,7 +69,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "type-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -96,7 +94,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "collection-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -121,7 +119,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "payload-category-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),

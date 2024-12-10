@@ -5,6 +5,7 @@ import dash
 import plotly.graph_objs as go
 import sqlalchemy
 from dash import Dash, Input, Output, dcc, html, ALL
+from dash.dash import no_update
 from flask import Flask, redirect, render_template, request
 
 from src import config, network
@@ -56,6 +57,7 @@ class DashboardApp:
                         for page in dash.page_registry.values()
                     ],
                 ),
+                # XXX: Layout aufhübschen
                 dcc.RadioItems(
                     id="hide-test-clients-radio-group",
                     options=[{"label": "Hide", "value": "hide"}, {"label": "Show", "value": "show"}],
@@ -137,7 +139,9 @@ class DashboardApp:
 
         @self._app.callback(
             Output("payload_category_of_datawallet_modifications$graph", "figure"),
-            Input({"type": "hide-test-clients-checkbox", "plot": "payload-category-of-datawallet-modifications"}, "value"),
+            Input(
+                {"type": "hide-test-clients-checkbox", "plot": "payload-category-of-datawallet-modifications"}, "value"
+            ),
         )
         def payload_category_of_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -166,9 +170,7 @@ class DashboardApp:
             return plots.type_of_datawallet_modifications(df)
 
         @self._app.callback(
-            # Output("size_of_datawallet_modifications$graph", "figure"),
-            # Input("size_of_datawallet_modifications$hideTestClients", "value"),
-            Output({"type": "graph", "plot": "size-of-datawallet-modifications"}, "figure"),
+            Output("size_of_datawallet_modifications$graph", "figure"),
             Input({"type": "hide-test-clients-checkbox", "plot": "size-of-datawallet-modifications"}, "value"),
         )
         def size_of_datawallet_modifications(value: list | None) -> go.Figure:
@@ -178,7 +180,7 @@ class DashboardApp:
             return plots.size_of_datawallet_modifications(df)
 
         @self._app.callback(
-            Output({"type": "graph", "plot": "num-datawallet-modifications"}, "figure"),
+            Output("num_datawallet_modifications$graph", "figure"),
             Input({"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications"}, "value"),
             # Input({"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications", "index": 0}, "value"),
         )
@@ -440,32 +442,50 @@ class DashboardApp:
             Input("hide-test-clients-radio-group", "value"),
             Input({"type": "hide-test-clients-checkbox", "plot": ALL}, "value"),
         )
-        # XXX: rename
-        def foo(global_state: str | None, checkbox_states: list[list[str]]):
+        def sync_hide_test_clients_widgets(
+            radio: str | None, checkboxes: list[list[str]]
+        ) -> tuple[str | None, list[list[str]]]:
+            def mask_unnecessary_updates(
+                _radio: str | None, _checkboxes: list[list[str]]
+            ) -> tuple[str | None, list[list[str]]]:
+                new_radio = no_update if _radio == radio else _radio
+                new_checkboxes = []
+                for new, old in zip(_checkboxes, checkboxes):
+                    if len(new) == len(old):
+                        new_checkboxes.append(no_update)
+                    else:
+                        new_checkboxes.append(new)
+                return new_radio, new_checkboxes
+
             triggered_by = dash.ctx.triggered_id
+            # XXX: wird nach initialem Laden zweifach ausgeführt: init sowie durch alle Checkboxen der Page
+            #      Führt dazu, dass globaler Radio-Wert überschrieben wird.
+            print(f"foo called by {dash.ctx.triggered_prop_ids}")
+
+            # The trigger is none if the dashboard is initially loaded or if a
+            # different page is navigated to.
             if triggered_by is None:
-                # XXX: comment
-                if global_state is None:
-                    global_state = "hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show"
-                if global_state == "hide":
-                    return ("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
-                return ("show", [[]] * len(dash.ctx.outputs_list[1]))
+                # While switching between pages, when the radio group is unset
+                # due to mixed checkbox states, set its value from the config.
+                if radio is None:
+                    radio = "hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show"
+                if radio == "hide":
+                    return mask_unnecessary_updates("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
+                return mask_unnecessary_updates("show", [[]] * len(dash.ctx.outputs_list[1]))
 
             if triggered_by == "hide-test-clients-radio-group":
-                if global_state == "show":
-                    return ("show", [[]] * len(dash.ctx.outputs_list[1]))
-                return ("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
+                if radio == "show":
+                    return mask_unnecessary_updates("show", [[]] * len(dash.ctx.outputs_list[1]))
+                return mask_unnecessary_updates("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
 
-            # XXX: Nur Komponenten neu laden, die sich geändert haben. Momentan führt jede
-            #      Änderung einer Checkbox zum Neuladen aller Plots (vermutlich weil hier
-            #      für jeden Plot ein Output ausgegeben wird.)
-            #      Siehe dash.no_update
-            num_checked = sum(len(v) != 0 for v in checkbox_states)
+            # XXX: Maskieren verhindert, dass die Plots initial geladen werden.
+            #      Wie kann das gelöst werden?
+            num_checked = sum(len(v) != 0 for v in checkboxes)
             if num_checked == 0:
-                return ("show", checkbox_states)
-            if num_checked == len(checkbox_states):
-                return ("hide", checkbox_states)
-            return (None, checkbox_states)
+                return mask_unnecessary_updates("show", checkboxes)
+            if num_checked == len(checkboxes):
+                return mask_unnecessary_updates("hide", checkboxes)
+            return mask_unnecessary_updates(None, checkboxes)
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)
