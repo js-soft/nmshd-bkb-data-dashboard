@@ -27,19 +27,13 @@ def num_identities_per_client(
     - NumIdentities
     """
 
-    # TODO: Right Join anstatt Union 0
     query = """
-    SELECT ClientId,
-           count(ClientId) AS NumIdentities
-    FROM Devices.Identities
-    GROUP BY ClientId
-    UNION
-    SELECT ClientId,
-           0
-    FROM AdminUi.ClientOverviews
-    WHERE ClientId NOT IN
-        (SELECT DISTINCT ClientId
-         FROM Devices.Identities);
+    SELECT oai.ClientId,
+        count(i.Address) as NumIdentities
+    FROM Devices.Identities i
+    RIGHT JOIN Devices.OpenIDdictApplications oai
+    ON oai.ClientId = i.ClientId
+    GROUP BY oai.ClientId
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
@@ -350,17 +344,21 @@ def relationships(
     - ToClientType: category (ordered)
     """
 
-    # TODO: Die AdminUi.XYZ Views sollten nicht verwendet werden.
-    # Das Admin-UI ist relativ neu und daher noch stark in Entwicklung.
-    # Entsprechend besteht die Gefahr, dass die Views sich ändern.
     query = """
-    SELECT ro.Status, ro.AnsweredAt, ro.CreatedAt,
-        i.ClientId as FromClientId,i2.ClientId as ToClientId
-    FROM AdminUi.RelationshipOverviews ro
-    JOIN Devices.Identities i
-    ON i.Address = ro.[From]
+    SELECT
+        r.Status AS Status,
+	    r.CreatedAt AS CreatedAt,
+	    rc.CreatedAt AS AnsweredAt,
+	    i1.ClientId as FromClientId,
+	    i2.ClientId as ToClientId
+    FROM Relationships.Relationships r
+    LEFT JOIN Relationships.RelationshipChanges rc
+    ON r.Id = rc.RelationshipId
+    JOIN Devices.Identities i1
+    ON i1.Address = r.[From]
     JOIN Devices.Identities i2
-    ON i2.Address = ro.[To]
+    ON i2.Address = r.[To]
+    WHERE rc.Type = 10;
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
