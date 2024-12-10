@@ -14,7 +14,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_identities_per_client$checkbox",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-identities-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -39,7 +39,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_identity_creations$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-identity-creations"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     # XXX: Wird über Callback gesetzt, entfernen
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],

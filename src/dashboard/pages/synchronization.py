@@ -14,7 +14,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="sync_errors$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "sync-errors"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -39,7 +39,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="type_of_external_events$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "type-of-external-events"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -64,7 +64,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_external_events_per_sync_run$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-external-events-per-sync-run"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -89,7 +89,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_external_events$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-external-events"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),

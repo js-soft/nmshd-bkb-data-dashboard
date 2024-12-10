@@ -14,7 +14,6 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    # id="num_datawallet_modifications$hideTestClients",
                                     id={"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
@@ -43,7 +42,6 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    # id="size_of_datawallet_modifications$hideTestClients",
                                     id={"type": "hide-test-clients-checkbox", "plot": "size-of-datawallet-modifications"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
@@ -71,7 +69,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="type_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "type-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -96,7 +94,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="collection_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "collection-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -121,7 +119,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="payload_category_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "payload-category-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),

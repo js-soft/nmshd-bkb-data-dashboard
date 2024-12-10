@@ -14,7 +14,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="size_of_relationship_templates$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "size-of-relationship-templates"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -39,7 +39,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_relationship_templates_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-relationship-templates-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -64,7 +64,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_max_rel_templ_allocations$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-max-rel-templ-allocations"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -89,7 +89,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="rlt_time_until_first_usage$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "rlt-time-until-first-usage"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -114,7 +114,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="rlt_validity_period$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "rlt-validity-period"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),

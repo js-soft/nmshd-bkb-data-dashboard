@@ -14,7 +14,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_files_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-files-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -39,7 +39,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="size_of_file_contents$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "size-of-file-contents"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -64,7 +64,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_num_created_files$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-num-created-files"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),

@@ -14,7 +14,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_tokens_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-tokens-per-identity"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"}
                                     ],
@@ -41,7 +41,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="token_size$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "token-size"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"}
                                     ],

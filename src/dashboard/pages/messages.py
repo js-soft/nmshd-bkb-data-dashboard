@@ -14,7 +14,8 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_sent_messages_per_client$hideTestClients",
+                                    # id="num_sent_messages_per_client$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-sent-messages-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -39,7 +40,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_received_messages_per_client$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-received-messages-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -64,7 +65,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_recipients_per_sender_client_type$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-recipients-per-sender-client-type"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
@@ -89,7 +90,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="message_content_size$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "message-content-size"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
@@ -116,7 +117,7 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_num_sent_messages$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-num-sent-messages"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],

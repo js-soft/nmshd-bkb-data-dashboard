@@ -59,7 +59,6 @@ class DashboardApp:
                 dcc.RadioItems(
                     id="hide-test-clients-radio-group",
                     options=[{"label": "Hide", "value": "hide"}, {"label": "Show", "value": "show"}],
-                    # XXX: An Zustand der einzelnen Checkboxen koppeln
                     value="hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show",
                     inline=True,
                 ),
@@ -98,7 +97,7 @@ class DashboardApp:
     def _setup_callbacks(self):
         @self._app.callback(
             Output("num_max_rel_templ_allocations$graph", "figure"),
-            Input("num_max_rel_templ_allocations$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-max-rel-templ-allocations"}, "value"),
         )
         def num_max_rel_templ_allocations(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -108,7 +107,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("size_of_file_contents$graph", "figure"),
-            Input("size_of_file_contents$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "size-of-file-contents"}, "value"),
         )
         def size_of_file_contents(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -118,7 +117,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_external_events_per_sync_run$graph", "figure"),
-            Input("num_external_events_per_sync_run$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-external-events-per-sync-run"}, "value"),
         )
         def num_external_events_per_sync_run(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -128,7 +127,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("type_of_external_events$graph", "figure"),
-            Input("type_of_external_events$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "type-of-external-events"}, "value"),
         )
         def type_of_external_events(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -138,7 +137,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("payload_category_of_datawallet_modifications$graph", "figure"),
-            Input("payload_category_of_datawallet_modifications$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "payload-category-of-datawallet-modifications"}, "value"),
         )
         def payload_category_of_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -148,7 +147,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("collection_of_datawallet_modifications$graph", "figure"),
-            Input("collection_of_datawallet_modifications$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "collection-of-datawallet-modifications"}, "value"),
         )
         def collection_of_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -158,7 +157,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("type_of_datawallet_modifications$graph", "figure"),
-            Input("type_of_datawallet_modifications$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "type-of-datawallet-modifications"}, "value"),
         )
         def type_of_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -191,7 +190,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("forcegraph$iframe", "src"),
-            Input("forcegraph$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "forcegraph"}, "value"),
         )
         def update_forcegraph(value: list | None) -> str:
             hide_test_clients = value is not None and len(value) > 0
@@ -201,7 +200,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_identities_per_client$graph", "figure"),
-            Input("num_identities_per_client$checkbox", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-identities-per-client"}, "value"),
         )
         def num_identities_per_client(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -211,7 +210,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_sent_messages_per_client$graph", "figure"),
-            Input("num_sent_messages_per_client$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-sent-messages-per-client"}, "value"),
         )
         def num_sent_messages_per_client(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -221,7 +220,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_received_messages_per_client$graph", "figure"),
-            Input("num_received_messages_per_client$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-received-messages-per-client"}, "value"),
         )
         def num_received_messages_per_client(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -231,7 +230,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_devices_per_identity$graph", "figure"),
-            Input("num_devices_per_identity$checkbox", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-devices-per-identity"}, "value"),
         )
         def num_devices_per_identity(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -241,7 +240,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_recipients_per_sender_client_type$graph", "figure"),
-            Input("num_recipients_per_sender_client_type$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-recipients-per-sender-client-type"}, "value"),
         )
         def num_recipients_per_sender_client_type(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -251,7 +250,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("activity_identity_creations$graph", "figure"),
-            Input("activity_identity_creations$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "activity-identity-creations"}, "value"),
         )
         def activity_identity_creations(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -265,7 +264,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_peers_per_identity$graph", "figure"),
-            Input("num_peers_per_identity$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-peers-per-identity"}, "value"),
         )
         def num_peers_per_identity(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -275,7 +274,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_tokens_per_identity$graph", "figure"),
-            Input("num_tokens_per_identity$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-tokens-per-identity"}, "value"),
         )
         def num_tokens_per_identity(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -285,7 +284,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_relationship_templates_per_identity$graph", "figure"),
-            Input("num_relationship_templates_per_identity$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-relationship-templates-per-identity"}, "value"),
         )
         def num_relationship_templates_per_identity(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
@@ -295,7 +294,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("token_size$graph", "figure"),
-            Input("token_size$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "token-size"}, "value"),
         )
         def token_size(value: list | None) -> go.Figure:
             hide_test_clients = value is not None and len(value) > 0
@@ -305,7 +304,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("activity_num_sent_messages$graph", "figure"),
-            Input("activity_num_sent_messages$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "activity-num-sent-messages"}, "value"),
         )
         def activity_num_sent_messages(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -319,17 +318,21 @@ class DashboardApp:
 
         @self._app.callback(
             Output("activity_external_events$graph", "figure"),
-            Input("activity_external_events$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "activity-external-events"}, "value"),
         )
         def activity_external_events(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
             with self._grab_cnxn() as cnxn:
                 df = queries.external_events(cnxn, hide)
-            return plots.activity_plot(df, time_col="CreatedAt", split_col="ClientType",)
+            return plots.activity_plot(
+                df,
+                time_col="CreatedAt",
+                split_col="ClientType",
+            )
 
         @self._app.callback(
             Output("sync_errors$graph", "figure"),
-            Input("sync_errors$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "sync-errors"}, "value"),
         )
         def sync_errors(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -339,7 +342,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("relationship_status_distribution$graph", "figure"),
-            Input("relationship_status_distribution$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "relationship-status-distribution"}, "value"),
         )
         def relationship_status_distribution(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -349,7 +352,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("relationship_duration_pending$graph", "figure"),
-            Input("relationship_duration_pending$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "relationship-duration-pending"}, "value"),
         )
         def relationship_duration_pending(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -359,7 +362,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("device_type_distribution$graph", "figure"),
-            Input("device_type_distribution$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "device-type-distribution"}, "value"),
         )
         def device_type_distribution(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -369,7 +372,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("message_content_size$graph", "figure"),
-            Input("message_content_size$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "message-content-size"}, "value"),
         )
         def message_content_size(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -379,7 +382,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("size_of_relationship_templates$graph", "figure"),
-            Input("size_of_relationship_templates$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "size-of-relationship-templates"}, "value"),
         )
         def size_of_relationship_templates(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -389,7 +392,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("activity_num_created_files$graph", "figure"),
-            Input("activity_num_created_files$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "activity-num-created-files"}, "value"),
         )
         def activity_num_created_files(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -403,7 +406,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("num_files_per_identity$graph", "figure"),
-            Input("num_files_per_identity$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "num-files-per-identity"}, "value"),
         )
         def num_files_per_identity(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -413,7 +416,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("rlt_time_until_first_usage$graph", "figure"),
-            Input("rlt_time_until_first_usage$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "rlt-time-until-first-usage"}, "value"),
         )
         def rlt_time_until_first_usage(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -423,7 +426,7 @@ class DashboardApp:
 
         @self._app.callback(
             Output("rlt_validity_period$graph", "figure"),
-            Input("rlt_validity_period$hideTestClients", "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "rlt-validity-period"}, "value"),
         )
         def rlt_validity_period(hide_list: list | None) -> go.Figure:
             hide = hide_list is not None and len(hide_list) > 0
@@ -433,43 +436,36 @@ class DashboardApp:
 
         @self._app.callback(
             Output("hide-test-clients-radio-group", "value"),
-            Output({"type": "hide-test-clients-checkbox","plot": ALL}, "value"),
+            Output({"type": "hide-test-clients-checkbox", "plot": ALL}, "value"),
             Input("hide-test-clients-radio-group", "value"),
-            Input({"type": "hide-test-clients-checkbox","plot": ALL}, "value"),
+            Input({"type": "hide-test-clients-checkbox", "plot": ALL}, "value"),
         )
         # XXX: rename
         def foo(global_state: str | None, checkbox_states: list[list[str]]):
             triggered_by = dash.ctx.triggered_id
-            if triggered_by == "hide-test-clients-radio-group" or triggered_by is None:
+            if triggered_by is None:
+                # XXX: comment
+                if global_state is None:
+                    global_state = "hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show"
+                if global_state == "hide":
+                    return ("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
+                return ("show", [[]] * len(dash.ctx.outputs_list[1]))
+
+            if triggered_by == "hide-test-clients-radio-group":
                 if global_state == "show":
-                    return ("show", [[]] * len(dash.ctx.outputs_list))
-                return ("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list))
+                    return ("show", [[]] * len(dash.ctx.outputs_list[1]))
+                return ("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
 
             # XXX: Nur Komponenten neu laden, die sich geändert haben. Momentan führt jede
             #      Änderung einer Checkbox zum Neuladen aller Plots (vermutlich weil hier
             #      für jeden Plot ein Output ausgegeben wird.)
+            #      Siehe dash.no_update
             num_checked = sum(len(v) != 0 for v in checkbox_states)
             if num_checked == 0:
                 return ("show", checkbox_states)
             if num_checked == len(checkbox_states):
                 return ("hide", checkbox_states)
             return (None, checkbox_states)
-
-
-
-
-
-        # @self._app.callback(
-        #     Output({"type": "hide-test-clients-checkbox","plot": ALL}, "value"),
-        #     Input("hide-test-clients-radio-group", "value"),
-        # )
-        # # def foo(global_state, checkbox_states):
-        # def foo(global_state):
-        #     triggered_by = dash.ctx.triggered_id
-        #     if triggered_by == "hide-test-clients-radio-group":
-        #         if global_state is None or global_state == "show":
-        #             return [[]] * len(dash.ctx.outputs_list)
-        #         return [["hide_test_clients"]] * len(dash.ctx.outputs_list)
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)
