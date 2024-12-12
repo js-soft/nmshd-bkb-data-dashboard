@@ -4,7 +4,7 @@ from typing import Any, Literal
 import dash
 import plotly.graph_objs as go
 import sqlalchemy
-from dash import Dash, Input, Output, dcc, html, ALL
+from dash import Dash, State, Input, Output, dcc, html, ALL
 from dash.dash import no_update
 from flask import Flask, redirect, render_template, request
 
@@ -231,7 +231,7 @@ class DashboardApp:
             return plots.num_received_messages_per_client(df)
 
         @self._app.callback(
-            Output("num_devices_per_identity$graph", "figure"),
+            Output({"type": "graph", "plot": "num-devices-per-identity"}, "figure"),
             Input({"type": "hide-test-clients-checkbox", "plot": "num-devices-per-identity"}, "value"),
         )
         def num_devices_per_identity(value: list | None) -> go.Figure:
@@ -363,7 +363,7 @@ class DashboardApp:
             return plots.relationship_duration_pending(df)
 
         @self._app.callback(
-            Output("device_type_distribution$graph", "figure"),
+            Output({"type": "graph", "plot": "device-type-distribution"}, "figure"),
             Input({"type": "hide-test-clients-checkbox", "plot": "device-type-distribution"}, "value"),
         )
         def device_type_distribution(hide_list: list | None) -> go.Figure:
@@ -441,9 +441,11 @@ class DashboardApp:
             Output({"type": "hide-test-clients-checkbox", "plot": ALL}, "value"),
             Input("hide-test-clients-radio-group", "value"),
             Input({"type": "hide-test-clients-checkbox", "plot": ALL}, "value"),
+            State({"type": "graph", "plot": ALL}, "figure"),
+            # prevent_initial_call=True,
         )
         def sync_hide_test_clients_widgets(
-            radio: str | None, checkboxes: list[list[str]]
+            radio: str | None, checkboxes: list[list[str]], graphs,
         ) -> tuple[str | None, list[list[str]]]:
             def mask_unnecessary_updates(
                 _radio: str | None, _checkboxes: list[list[str]]
@@ -458,34 +460,52 @@ class DashboardApp:
                 return new_radio, new_checkboxes
 
             triggered_by = dash.ctx.triggered_id
-            # XXX: wird nach initialem Laden zweifach ausgeführt: init sowie durch alle Checkboxen der Page
-            #      Führt dazu, dass globaler Radio-Wert überschrieben wird.
-            print(f"foo called by {dash.ctx.triggered_prop_ids}")
-
-            # The trigger is none if the dashboard is initially loaded or if a
-            # different page is navigated to.
             if triggered_by is None:
+                # XXX: dash.ctx.{outputs,inputs}_list[1] sind leer beim initialen (F5) laden. Kann es sein, dass
+                # beim initialen Laden die Page-Widgets noch nicht existieren und dass erst anschließend
+                # in einem zweiten Callback die Checkboxes geladen werden?
+
+                # Laden der Radiogroup im Header, Pageinhalt existiert noch nicht
+                if len(checkboxes) == 0:
+                    raise dash.exceptions.PreventUpdate
+
                 # While switching between pages, when the radio group is unset
                 # due to mixed checkbox states, set its value from the config.
                 if radio is None:
                     radio = "hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show"
                 if radio == "hide":
-                    return mask_unnecessary_updates("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
-                return mask_unnecessary_updates("show", [[]] * len(dash.ctx.outputs_list[1]))
+                    result = mask_unnecessary_updates("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
+                else:
+                    result = mask_unnecessary_updates("show", [[]] * len(dash.ctx.outputs_list[1]))
 
-            if triggered_by == "hide-test-clients-radio-group":
+            elif triggered_by == "hide-test-clients-radio-group":
                 if radio == "show":
-                    return mask_unnecessary_updates("show", [[]] * len(dash.ctx.outputs_list[1]))
-                return mask_unnecessary_updates("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
+                    result = mask_unnecessary_updates("show", [[]] * len(dash.ctx.outputs_list[1]))
+                else:
+                    result = mask_unnecessary_updates("hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1]))
 
             # XXX: Maskieren verhindert, dass die Plots initial geladen werden.
             #      Wie kann das gelöst werden?
-            num_checked = sum(len(v) != 0 for v in checkboxes)
-            if num_checked == 0:
-                return mask_unnecessary_updates("show", checkboxes)
-            if num_checked == len(checkboxes):
-                return mask_unnecessary_updates("hide", checkboxes)
-            return mask_unnecessary_updates(None, checkboxes)
+            else:
+
+                if all(g is None for g in graphs):
+                    if radio == "hide":
+                        return "hide", [["hide_test_clients"]] * len(dash.ctx.outputs_list[1])
+                    return "show", [[]] * len(dash.ctx.outputs_list[1])
+
+                num_checked = sum(len(v) != 0 for v in checkboxes)
+                if num_checked == 0:
+                    result =  mask_unnecessary_updates("show", checkboxes)
+                elif num_checked == len(checkboxes):
+                    result = mask_unnecessary_updates("hide", checkboxes)
+                else:
+                    result = mask_unnecessary_updates(None, checkboxes)
+
+            import time
+            # TODO: in abhängigkeit davon ob graphs is None maskieren oder nicht
+            s = time.time()
+            print(f"callback {time.time()}: {result=}")
+            return result
 
     def render_forcegraph(self):
         hide_test_clients = request.args.get("hide-test-clients", default=False, type=bool)

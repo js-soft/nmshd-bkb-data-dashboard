@@ -2,6 +2,7 @@ import dash
 from dash import dcc, html
 
 from src.dashboard import _get_dropdown
+from src import config
 
 dash.register_page(__name__)
 
@@ -17,7 +18,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "num-devices-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=[],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -28,7 +29,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_devices_per_identity$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-devices-per-identity"}),
             ],
             id="num_devices_per_identity$div",
             className="graph-div",
@@ -42,7 +43,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "device-type-distribution"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=[],
+                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
                                 ),
                             ]
                         ),
@@ -53,7 +54,8 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="device_type_distribution$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "device-type-distribution"}),
+
             ],
             id="device_type_distribution$div",
             className="graph-div",
