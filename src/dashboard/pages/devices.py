@@ -18,7 +18,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "num-devices-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -43,7 +43,7 @@ layout = html.Div(
                                 dcc.Checklist(
                                     id={"type": "hide-test-clients-checkbox", "plot": "device-type-distribution"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -55,7 +55,6 @@ layout = html.Div(
                     className="plot-header",
                 ),
                 dcc.Graph(id={"type": "graph", "plot": "device-type-distribution"}),
-
             ],
             id="device_type_distribution$div",
             className="graph-div",
