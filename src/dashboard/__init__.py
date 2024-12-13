@@ -56,12 +56,16 @@ class DashboardApp:
                         for page in dash.page_registry.values()
                     ],
                 ),
-                # XXX: Layout aufhübschen
-                dcc.RadioItems(
-                    id="hide-test-clients-radio-group",
-                    options=[{"label": "Hide", "value": "hide"}, {"label": "Show", "value": "show"}],
-                    value="hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show",
-                    inline=True,
+                html.Div([
+                    # XXX: Layout aufhübschen
+                    "Test Clients",
+                    dcc.RadioItems(
+                        id="hide-test-clients-radio-group",
+                        options=[{"label": "Exclude", "value": "hide"}, {"label": "Include", "value": "show"}],
+                        value="hide" if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else "show",
+                        inline=True,
+                    )],
+                    id="hide-test-clients-div",
                 ),
                 html.Div(dash.page_container, className="page-container"),
             ]
