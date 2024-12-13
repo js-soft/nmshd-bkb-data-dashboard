@@ -449,7 +449,7 @@ class DashboardApp:
         def sync_hide_test_clients_widgets(
             radio: str | None,
             checkboxes: list[list[str]],
-            graphs,
+            graphs: list[dict | None],
         ) -> tuple[str | None, list[list[str]]]:
             def mask_updates(
                 _radio: str | None,
