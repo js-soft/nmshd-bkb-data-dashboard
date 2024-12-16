@@ -91,6 +91,7 @@ def no_data() -> go.Figure:
 def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
     """
     Accepts a dataframe with the following columns:
+    - ClientDisplayName: category (ordered)
     - ClientId: category (ordered)
     - ClientType: category (ordered)
     - NumIdentities
@@ -99,7 +100,7 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
     if len(df) == 0:
         return no_data()
 
-    df = df.filter(["ClientId", "ClientType", "NumIdentities"])
+    df = df.filter(["ClientDisplayName", "ClientId", "ClientType", "NumIdentities"])
     # TODO: We have to set the category orders explicitly by sorting our values
     #       manually, instead of using plotly's xaxis_categoryorder layout
     #       option. plotly.js seems to cache data between updates, leading to
@@ -107,10 +108,17 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
     #       https://github.com/streamlit/streamlit/issues/5902 for a similar
     #       issue.
     df = df.sort_values(by=["NumIdentities"], ascending=False)
+    df["ClientPlotName"] = pd.Categorical(
+            df["ClientDisplayName"].astype(object).where(
+            (~df["ClientDisplayName"].isna()) & (df["ClientDisplayName"].str.len() != 0),
+            df["ClientId"]
+        ),
+        ordered=True
+    )
 
     p = px.bar(
         df,
-        x="ClientId",
+        x="ClientPlotName",
         y="NumIdentities",
         color="ClientType",
         log_y=True,
@@ -118,15 +126,17 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
             "ClientId": "BB Client ID",
             "NumIdentities": "Number of Identities",
             "ClientType": "BB Client Type",
+            "ClientDisplayName": "BB Client Display Name"
         },
-        hover_name="ClientId",
         hover_data={
             "NumIdentities": True,
-            "ClientId": False,
+            "ClientDisplayName": True,
+            "ClientId": True,
             "ClientType": False,
+            "ClientPlotName": False
         },
         color_discrete_map=client_type_colmap,
-        category_orders={"ClientId": df["ClientId"]},
+        category_orders={"ClientPlotName": df["ClientPlotName"]},
     )
 
     return p
@@ -136,6 +146,7 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
     """
     Accepts a dataframe with the following columns:
     - NumMessages
+    - SenderClientDisplayName: category (ordered)
     - SenderClientId: category (ordered)
     - SenderClientType: category (ordered)
     """
@@ -143,12 +154,19 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
     if len(df) == 0:
         return no_data()
 
-    df = df.filter(["NumMessages", "SenderClientId", "SenderClientType"])
+    df = df.filter(["NumMessages", "SenderClientId", "SenderClientType", "SenderClientDisplayName"])
     df = df.sort_values(by=["NumMessages"], ascending=False)
+    df["SenderClientPlotName"] = pd.Categorical(
+            df["SenderClientDisplayName"].astype(object).where(
+            (~df["SenderClientDisplayName"].isna()) & (df["SenderClientDisplayName"].str.len() != 0),
+            df["SenderClientId"]
+        ),
+        ordered=True
+    )
 
     p = px.bar(
         df,
-        x="SenderClientId",
+        x="SenderClientPlotName",
         y="NumMessages",
         color="SenderClientType",
         log_y=True,
@@ -156,15 +174,17 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
             "SenderClientId": "BB Client ID",
             "NumMessages": "Number of Messages",
             "SenderClientType": "BB Client Type",
+            "SenderClientDisplayName": "BB Client Display Name",
         },
-        hover_name="SenderClientId",
         hover_data={
             "NumMessages": True,
-            "SenderClientId": False,
+            "SenderClientId": True,
             "SenderClientType": False,
+            "SenderClientDisplayName": True,
+            "SenderClientPlotName": False,
         },
         color_discrete_map=client_type_colmap,
-        category_orders={"SenderClientId": df["SenderClientId"]},
+        category_orders={"SenderClientPlotName": df["SenderClientPlotName"]},
     )
 
     return p
@@ -174,6 +194,7 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
     """
     Accepts a dataframe with the following columns:
     - NumMessages
+    - RecipientClientDisplayName: category (ordered)
     - RecipientClientId: category (ordered)
     - RecipientClientType: category (ordered)
     """
@@ -181,12 +202,19 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
     if len(df) == 0:
         return no_data()
 
-    df = df.filter(["NumMessages", "RecipientClientId", "RecipientClientType"])
+    df = df.filter(["NumMessages", "RecipientClientId", "RecipientClientType", "RecipientClientDisplayName"])
     df = df.sort_values(by=["NumMessages"], ascending=False)
+    df["RecipientClientPlotName"] = pd.Categorical(
+            df["RecipientClientDisplayName"].astype(object).where(
+            (~df["RecipientClientDisplayName"].isna()) & (df["RecipientClientDisplayName"].str.len() != 0),
+            df["RecipientClientId"]
+        ),
+        ordered=True
+    )
 
     p = px.bar(
         df,
-        x="RecipientClientId",
+        x="RecipientClientPlotName",
         y="NumMessages",
         color="RecipientClientType",
         log_y=True,
@@ -194,15 +222,17 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
             "RecipientClientId": "BB Client ID",
             "NumMessages": "Number of Messages",
             "RecipientClientType": "BB Client Type",
+            "RecipientClientDisplayName": "BB Client Display Name"
         },
-        hover_name="RecipientClientId",
         hover_data={
             "NumMessages": True,
-            "RecipientClientId": False,
+            "RecipientClientId": True,
             "RecipientClientType": False,
+            "RecipientClientDisplayName": True,
+            "RecipientClientPlotName": False,
         },
         color_discrete_map=client_type_colmap,
-        category_orders={"RecipientClientId": df["RecipientClientId"]},
+        category_orders={"RecipientClientPlotName": df["RecipientClientPlotName"]},
     )
 
     return p

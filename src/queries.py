@@ -22,24 +22,19 @@ def num_identities_per_client(
 ) -> pd.DataFrame:
     """
     Returns a dataframe with the following columns:
+    - ClientDisplayName: category (ordered)
     - ClientId: category (ordered)
     - ClientType: category (ordered)
     - NumIdentities
     """
 
-    # TODO: Right Join anstatt Union 0
     query = """
-    SELECT ClientId,
-           count(ClientId) AS NumIdentities
-    FROM Devices.Identities
-    GROUP BY ClientId
-    UNION
-    SELECT ClientId,
-           0
-    FROM AdminUi.ClientOverviews
-    WHERE ClientId NOT IN
-        (SELECT DISTINCT ClientId
-         FROM Devices.Identities);
+    SELECT B.ClientId,
+           B.DisplayName as ClientDisplayName,
+           count(A.Address) as NumIdentities
+    FROM Devices.Identities A
+    RIGHT JOIN Devices.OpenIDdictApplications AS B ON B.ClientId = A.ClientId
+    GROUP BY B.ClientId, B.DisplayName
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
@@ -52,6 +47,7 @@ def num_identities_per_client(
         mask = ~df["ClientId"].map(is_test_client)
         if len(mask) > 0:
             df = df[mask]
+    df["ClientDisplayName"] = pd.Categorical(df["ClientDisplayName"], ordered=True)
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df["ClientId"] = pd.Categorical(df["ClientId"], ordered=True)
 
@@ -65,22 +61,26 @@ def num_sent_messages_per_client(
     """
     Returns a dataframe with the following columns:
     - NumMessages
+    - SenderClientDisplayName: category (ordered)
     - SenderClientId: category (ordered)
     - SenderClientType: category (ordered)
     """
 
     query = """
     SELECT B.ClientId AS SenderClientId,
+	       C.DisplayName as SenderClientDisplayName,
            count(A.Id) AS NumMessages
     FROM Messages.Messages AS A
     RIGHT JOIN Devices.Identities AS B ON A.CreatedBy = B.Address
-    GROUP BY B.ClientId
+    JOIN Devices.OpenIddictApplications as C ON B.ClientId = C.ClientId
+    GROUP BY B.ClientId, C.DisplayName
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
         mask = ~df["SenderClientId"].map(is_test_client)
         if len(mask) > 0:
             df = df[mask]
+    df["SenderClientDisplayName"] = pd.Categorical(df["SenderClientDisplayName"], ordered=True)
     df["SenderClientType"] = pd.Categorical(df["SenderClientId"].map(bb_client_type_from_id), ordered=True)
     df["SenderClientId"] = pd.Categorical(df["SenderClientId"], ordered=True)
 
@@ -94,22 +94,28 @@ def num_received_messages_per_client(
     """
     Returns a dataframe with the following columns:
     - NumMessages
+    - RecipientClientDisplayName: category (ordered)
     - RecipientClientId: category (ordered)
     - RecipientClientType: category (ordered)
     """
 
     query = """
     SELECT B.ClientId AS RecipientClientId,
+           C.DisplayName as RecipientClientDisplayName,
            count(A.MessageId) as NumMessages
     FROM Messages.RecipientInformation AS A
-    RIGHT JOIN Devices.Identities AS B ON A.Address = B.Address
-    GROUP BY B.ClientId
+    RIGHT JOIN Devices.Identities AS B
+    ON A.Address = B.Address
+    JOIN Devices.OpenIddictApplications C
+    ON C.ClientId = B.ClientId
+    GROUP BY B.ClientId, C.DisplayName
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
         mask = ~df["RecipientClientId"].map(is_test_client)
         if len(mask) > 0:
             df = df[mask]
+    df["RecipientClientDisplayName"] = pd.Categorical(df["RecipientClientDisplayName"], ordered=True)
     df["RecipientClientType"] = pd.Categorical(df["RecipientClientId"].map(bb_client_type_from_id), ordered=True)
     df["RecipientClientId"] = pd.Categorical(df["RecipientClientId"], ordered=True)
 
@@ -349,16 +355,18 @@ def relationships(
     - FromClientType: category (ordered)
     - ToClientType: category (ordered)
     """
-
     # TODO: Die AdminUi.XYZ Views sollten nicht verwendet werden.
     # Das Admin-UI ist relativ neu und daher noch stark in Entwicklung.
     # Entsprechend besteht die Gefahr, dass die Views sich ändern.
     query = """
-    SELECT ro.Status, ro.AnsweredAt, ro.CreatedAt,
-        i.ClientId as FromClientId,i2.ClientId as ToClientId
+    SELECT ro.Status AS Status,
+           ro.CreatedAt AS CreatedAt,
+           ro.AnsweredAt AS AnsweredAt,
+           i1.ClientId as FromClientId,
+           i2.ClientId as ToClientId
     FROM AdminUi.RelationshipOverviews ro
-    JOIN Devices.Identities i
-    ON i.Address = ro.[From]
+    JOIN Devices.Identities i1
+    ON i1.Address = ro.[From]
     JOIN Devices.Identities i2
     ON i2.Address = ro.[To]
     """
@@ -723,7 +731,7 @@ def size_of_relationship_templates(
     SELECT LEN(RT.Content) as RelationshipTemplateSize, I.ClientId, RT.CreatedBy, RT.Id as RelationshipTemplateId
     FROM Relationships.RelationshipTemplates as RT
     INNER JOIN Devices.Identities as I
-    ON RT.CreatedBy = I.Address;
+    ON RT.CreatedBy = I.Address
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
