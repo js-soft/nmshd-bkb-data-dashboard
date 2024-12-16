@@ -361,7 +361,7 @@ def relationships(
     query = """
     SELECT ro.Status AS Status,
            ro.CreatedAt AS CreatedAt,
-           ro.CreatedAt AS AnsweredAt,
+           ro.AnsweredAt AS AnsweredAt,
            i1.ClientId as FromClientId,
            i2.ClientId as ToClientId
     FROM AdminUi.RelationshipOverviews ro
@@ -369,7 +369,6 @@ def relationships(
     ON i1.Address = ro.[From]
     JOIN Devices.Identities i2
     ON i2.Address = ro.[To]
-    WHERE ro.Status = 10
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
