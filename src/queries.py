@@ -61,7 +61,7 @@ def num_sent_messages_per_client(
     """
     Returns a dataframe with the following columns:
     - NumMessages
-    - SenderClientDisplalyName: category (ordered)
+    - SenderClientDisplayName: category (ordered)
     - SenderClientId: category (ordered)
     - SenderClientType: category (ordered)
     """
@@ -357,20 +357,17 @@ def relationships(
     """
 
     query = """
-    SELECT
-        r.Status AS Status,
-	    r.CreatedAt AS CreatedAt,
-	    rc.CreatedAt AS AnsweredAt,
-	    i1.ClientId as FromClientId,
-	    i2.ClientId as ToClientId
-    FROM Relationships.Relationships r
-    LEFT JOIN Relationships.RelationshipChanges rc
-    ON r.Id = rc.RelationshipId
+    SELECT ro.Status AS Status,
+           ro.CreatedAt AS CreatedAt,
+           ro.CreatedAt AS AnsweredAt,
+           i1.ClientId as FromClientId,
+           i2.ClientId as ToClientId
+    FROM AdminUi.RelationshipOverviews ro
     JOIN Devices.Identities i1
-    ON i1.Address = r.[From]
+    ON i1.Address = ro.[From]
     JOIN Devices.Identities i2
-    ON i2.Address = r.[To]
-    WHERE rc.Type = 10
+    ON i2.Address = ro.[To]
+    WHERE ro.Status = 10
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
