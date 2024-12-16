@@ -355,7 +355,9 @@ def relationships(
     - FromClientType: category (ordered)
     - ToClientType: category (ordered)
     """
-
+    # TODO: Die AdminUi.XYZ Views sollten nicht verwendet werden.
+    # Das Admin-UI ist relativ neu und daher noch stark in Entwicklung.
+    # Entsprechend besteht die Gefahr, dass die Views sich ändern.
     query = """
     SELECT ro.Status AS Status,
            ro.CreatedAt AS CreatedAt,
