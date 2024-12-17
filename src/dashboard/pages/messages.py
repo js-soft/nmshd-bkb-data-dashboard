@@ -13,7 +13,6 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    # id="num_sent_messages_per_client$hideTestClients",
                                     id={"type": "hide-test-clients-checkbox", "plot": "num-sent-messages-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
                                     value=[],

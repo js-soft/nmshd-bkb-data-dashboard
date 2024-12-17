@@ -184,7 +184,6 @@ class DashboardApp:
         @self._app.callback(
             Output({"type": "graph", "plot": "num-datawallet-modifications"}, "figure"),
             Input({"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications"}, "value"),
-            # Input({"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications", "index": 0}, "value"),
         )
         def num_datawallet_modifications(value: list | None) -> go.Figure:
             hide = value is not None and len(value) > 0
