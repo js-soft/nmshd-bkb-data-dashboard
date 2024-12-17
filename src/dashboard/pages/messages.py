@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,9 +13,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_sent_messages_per_client$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-sent-messages-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -27,7 +26,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_sent_messages_per_client$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-sent-messages-per-client"}),
             ],
             id="num_sent_messages_per_client$div",
             className="graph-div",
@@ -39,9 +38,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_received_messages_per_client$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-received-messages-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -52,7 +51,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_received_messages_per_client$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-received-messages-per-client"}),
             ],
             id="num_received_messages_per_client$div",
             className="graph-div",
@@ -64,9 +63,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_recipients_per_sender_client_type$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-recipients-per-sender-client-type"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -77,7 +76,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_recipients_per_sender_client_type$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-recipients-per-sender-client-type"}),
             ],
             id="num_recipients_per_sender_client_type$div",
             className="graph-div",
@@ -89,11 +88,11 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="message_content_size$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "message-content-size"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -104,7 +103,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="message_content_size$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "message-content-size"}),
             ],
             id="message_content_size$div",
             className="graph-div",
@@ -116,11 +115,11 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_num_sent_messages$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-num-sent-messages"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -131,7 +130,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="activity_num_sent_messages$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "activity-num-sent-messages"}),
             ],
             id="activity_num_sent_messages$div",
             className="graph-div",

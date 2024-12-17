@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,9 +13,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="size_of_relationship_templates$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "size-of-relationship-templates"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -27,7 +26,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="size_of_relationship_templates$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "size-of-relationship-templates"}),
             ],
             id="size_of_relationship_templates$div",
             className="graph-div",
@@ -39,9 +38,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_relationship_templates_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-relationship-templates-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -52,7 +51,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_relationship_templates_per_identity$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-relationship-templates-per-identity"}),
             ],
             id="num_relationship_templates_per_identity$div",
             className="graph-div",
@@ -64,9 +63,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_max_rel_templ_allocations$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-max-rel-templ-allocations"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -77,7 +76,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_max_rel_templ_allocations$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-max-rel-templ-allocations"}),
             ],
             id="num_max_rel_templ_allocations$div",
             className="graph-div",
@@ -89,9 +88,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="rlt_time_until_first_usage$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "rlt-time-until-first-usage"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -102,7 +101,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="rlt_time_until_first_usage$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "rlt-time-until-first-usage"}),
             ],
             id="rlt_time_until_first_usage$div",
             className="graph-div",
@@ -114,9 +113,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="rlt_validity_period$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "rlt-validity-period"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -127,7 +126,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="rlt_validity_period$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "rlt-validity-period"}),
             ],
             id="rlt_validity_period$div",
             className="graph-div",

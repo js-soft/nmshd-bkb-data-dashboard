@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,9 +13,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="sync_errors$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "sync-errors"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -27,7 +26,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="sync_errors$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "sync-errors"}),
             ],
             id="sync_errors$div",
             className="graph-div",
@@ -39,9 +38,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="type_of_external_events$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "type-of-external-events"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -52,7 +51,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="type_of_external_events$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "type-of-external-events"}),
             ],
             id="type_of_external_events$div",
             className="graph-div",
@@ -64,9 +63,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_external_events_per_sync_run$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-external-events-per-sync-run"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -77,7 +76,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_external_events_per_sync_run$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-external-events-per-sync-run"}),
             ],
             id="num_external_events_per_sync_run$div",
             className="graph-div",
@@ -89,9 +88,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_external_events$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-external-events"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -102,7 +101,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="activity_external_events$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "activity-external-events"}),
             ],
             id="activity_external_events$div",
             className="graph-div",

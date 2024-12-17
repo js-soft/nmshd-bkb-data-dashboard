@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,11 +13,11 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-datawallet-modifications"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -29,7 +28,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-datawallet-modifications"}),
             ],
             id="num_datawallet_modifications$div",
             className="graph-div",
@@ -41,11 +40,11 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="size_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "size-of-datawallet-modifications"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"},
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -56,7 +55,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="size_of_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "size-of-datawallet-modifications"}),
             ],
             id="size_of_datawallet_modifications$div",
             className="graph-div",
@@ -68,9 +67,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="type_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "type-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -81,7 +80,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="type_of_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "type-of-datawallet-modifications"}),
             ],
             id="type_of_datawallet_modifications$div",
             className="graph-div",
@@ -93,9 +92,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="collection_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "collection-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -106,7 +105,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="collection_of_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "collection-of-datawallet-modifications"}),
             ],
             id="collection_of_datawallet_modifications$div",
             className="graph-div",
@@ -118,9 +117,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="payload_category_of_datawallet_modifications$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "payload-category-of-datawallet-modifications"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -131,7 +130,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="payload_category_of_datawallet_modifications$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "payload-category-of-datawallet-modifications"}),
             ],
             id="payload_category_of_datawallet_modifications$div",
             className="graph-div",

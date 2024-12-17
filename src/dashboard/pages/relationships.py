@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,9 +13,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="forcegraph$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "forcegraph"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -43,9 +42,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="relationship_status_distribution$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "relationship-status-distribution"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -56,7 +55,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="relationship_status_distribution$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "relationship-status-distribution"}),
             ],
             id="relationship_status_distribution$div",
             className="graph-div",
@@ -68,9 +67,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="relationship_duration_pending$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "relationship-duration-pending"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -81,7 +80,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="relationship_duration_pending$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "relationship-duration-pending"}),
             ],
             id="relationship_duration_pending$div",
             className="graph-div",
@@ -93,9 +92,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_peers_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-peers-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -106,7 +105,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_peers_per_identity$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-peers-per-identity"}),
             ],
             id="num_peers_per_identity$div",
             className="graph-div",

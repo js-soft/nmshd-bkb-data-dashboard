@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,9 +13,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_identities_per_client$checkbox",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-identities-per-client"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -27,7 +26,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_identities_per_client$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-identities-per-client"}),
             ],
             id="num_identities_per_client$div",
             className="graph-div",
@@ -39,9 +38,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_identity_creations$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-identity-creations"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -52,7 +51,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="activity_identity_creations$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "activity-identity-creations"}),
             ],
             id="activity_identity_creations$div",
             className="graph-div",

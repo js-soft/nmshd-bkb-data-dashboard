@@ -164,3 +164,14 @@ div#page-links {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+#hide-test-clients-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  > .label {
+    padding-right: 0.5em;
+  }
+}

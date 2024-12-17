@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,9 +13,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_files_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-files-per-identity"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -27,7 +26,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_files_per_identity$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-files-per-identity"}),
             ],
             id="num_files_per_identity$div",
             className="graph-div",
@@ -39,9 +38,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="size_of_file_contents$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "size-of-file-contents"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -52,7 +51,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="size_of_file_contents$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "size-of-file-contents"}),
             ],
             id="size_of_file_contents$div",
             className="graph-div",
@@ -64,9 +63,9 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="activity_num_created_files$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "activity-num-created-files"},
                                     options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -77,7 +76,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="activity_num_created_files$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "activity-num-created-files"}),
             ],
             id="activity_num_created_files$div",
             className="graph-div",

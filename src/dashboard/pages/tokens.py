@@ -1,7 +1,6 @@
 import dash
 from dash import dcc, html
 
-from src import config
 from src.dashboard import _get_dropdown
 
 dash.register_page(__name__)
@@ -14,11 +13,11 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="num_tokens_per_identity$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "num-tokens-per-identity"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"}
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -29,7 +28,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="num_tokens_per_identity$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "num-tokens-per-identity"}),
             ],
             id="num_tokens_per_identity$div",
             className="graph-div",
@@ -41,11 +40,11 @@ layout = html.Div(
                         _get_dropdown(
                             children=[
                                 dcc.Checklist(
-                                    id="token_size$hideTestClients",
+                                    id={"type": "hide-test-clients-checkbox", "plot": "token-size"},
                                     options=[
                                         {"label": "Hide Test Clients?", "value": "hide_test_clients"}
                                     ],
-                                    value=["hide_test_clients"] if config.get().DASHBOARD_HIDE_TEST_CLIENTS_DEFAULT else [],
+                                    value=[],
                                 ),
                             ]
                         ),
@@ -56,7 +55,7 @@ layout = html.Div(
                     ],
                     className="plot-header",
                 ),
-                dcc.Graph(id="token_size$graph"),
+                dcc.Graph(id={"type": "graph", "plot": "token-size"}),
             ],
             id="token_size$div",
             className="graph-div",
