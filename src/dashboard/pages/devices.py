@@ -2,7 +2,6 @@ import dash
 from dash import dcc, html
 
 from src.dashboard import _get_dropdown
-from src import config
 
 dash.register_page(__name__)
 
