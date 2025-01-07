@@ -110,5 +110,30 @@ layout = html.Div(
             id="num_peers_per_identity$div",
             className="graph-div",
         ),
+        html.Div(
+            [
+                html.Div(
+                    children=[
+                        _get_dropdown(
+                            children=[
+                                dcc.Checklist(
+                                    id={"type": "hide-test-clients-checkbox", "plot": "ral-reasons"},
+                                    options=[{"label": "Hide Test Clients?", "value": "hide_test_clients"}],
+                                    value=[],
+                                ),
+                            ]
+                        ),
+                        html.Span(
+                            children=["Distribution of Relationship Audit Log Reasons"],
+                            className="plot-title",
+                        ),
+                    ],
+                    className="plot-header",
+                ),
+                dcc.Graph(id={"type": "graph", "plot": "ral-reasons"}),
+            ],
+            id="ral_reasons$div",
+            className="graph-div",
+        ),
     ]
 )
