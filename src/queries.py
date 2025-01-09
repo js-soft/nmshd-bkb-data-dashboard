@@ -11,6 +11,7 @@ from src import (
     bb_datawallet_modification_type_map,
     bb_external_event_type_map,
     bb_rel_status_map,
+    bb_relationship_audit_log_reason_map,
     is_test_client,
     DeviceType,
 )
@@ -1004,5 +1005,38 @@ def rlt_validity_period(
 
     df["RLTCreatorClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId", "CreatedAt", "ExpiresAt"])
+
+    return df
+
+
+def ral_reasons(
+    cnxn: Connection,
+    hide_test_clients: bool,
+) -> pd.DataFrame:
+    """
+    Returns dataframe with the following columns:
+    - Reason: category (ordered)
+    """
+
+    query = """
+    SELECT A.Reason AS Reason,
+           C.ClientId AS FromClientId,
+           D.ClientId AS ToClientId
+    FROM Relationships.RelationshipAuditLog AS A
+    LEFT JOIN Relationships.Relationships AS B
+    ON A.RelationshipId = B.Id
+    LEFT JOIN Devices.Identities AS C
+    ON B.[From] = C.Address
+    LEFT JOIN Devices.Identities AS D
+    ON B.[To] = D.Address
+    """
+    df = pd.read_sql_query(query, cnxn)
+    if hide_test_clients:
+        mask = ~df["FromClientId"].map(is_test_client) & ~df["ToClientId"].map(is_test_client)
+        if len(mask) > 0:
+            df = df[mask]
+
+    df["Reason"] = pd.Categorical(df["Reason"].map(bb_relationship_audit_log_reason_map), ordered=True)
+    df = df.drop(columns=["FromClientId", "ToClientId"])
 
     return df
