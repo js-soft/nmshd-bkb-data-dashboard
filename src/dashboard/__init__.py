@@ -341,7 +341,7 @@ class DashboardApp:
             hide = hide_list is not None and len(hide_list) > 0
             with self._grab_cnxn() as cnxn:
                 df = queries.sync_errors(cnxn, hide)
-            return plots.sync_errors(df)
+            return plots.timeline(df, "ErrorCode", "CreatedAt", True)
 
         @self._app.callback(
             Output({"type": "graph", "plot": "relationship-status-distribution"}, "figure"),
