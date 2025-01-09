@@ -1444,3 +1444,32 @@ def timeline(
     fig.update_xaxes(tickvals=month_center, ticktext=ticktext)
 
     return fig
+
+
+def ral_reasons(df: pd.DataFrame) -> go.Figure:
+    """
+    Accepts a dataframe with the following columns:
+    - Reason: category (ordered)
+    """
+
+    if len(df) == 0:
+        return no_data()
+
+    df = df.filter(["Reason"])
+    df = df.groupby(["Reason"], as_index=False, observed=True).value_counts()
+
+    p = px.bar(
+        df,
+        x="count",
+        y="Reason",
+        log_x=True,
+        labels={
+            "count": "No. Audit Log Entries",
+            "Reason": "Audit Log Reason",
+        },
+        category_orders={
+            "Reason": df["Reason"].cat.categories,
+        },
+        color_discrete_sequence=default_color_seq,
+    )
+    return p

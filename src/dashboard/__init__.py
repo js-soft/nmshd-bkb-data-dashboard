@@ -438,6 +438,16 @@ class DashboardApp:
             return plots.rlt_validity_period(df)
 
         @self._app.callback(
+            Output({"type": "graph", "plot": "ral-reasons"}, "figure"),
+            Input({"type": "hide-test-clients-checkbox", "plot": "ral-reasons"}, "value"),
+        )
+        def ral_reasons(hide_list: list | None) -> go.Figure:
+            hide = hide_list is not None and len(hide_list) > 0
+            with self._grab_cnxn() as cnxn:
+                df = queries.ral_reasons(cnxn, hide)
+            return plots.ral_reasons(df)
+
+        @self._app.callback(
             Output("hide-test-clients-radio-group", "value"),
             Output({"type": "hide-test-clients-checkbox", "plot": ALL}, "value"),
             Input("hide-test-clients-radio-group", "value"),

@@ -29,6 +29,7 @@ bb_rel_status_map = {
     70: "ReadyForDeletion",
 }
 
+# See https://github.com/nmshd/backbone/blob/main/Modules/Synchronization/src/Synchronization.Domain/Entities/DatawalletModification.cs
 bb_datawallet_modification_type_map = {
     0: "Create",
     1: "Update",
@@ -36,14 +37,14 @@ bb_datawallet_modification_type_map = {
     3: "CacheChanged",
 }
 
-# See https://github.com/nmshd/backbone/blob/9f72386994f343b548e0ba694f45ab2b1b7d023a/Modules/Devices/src/Devices.Domain/Entities/Identities/Identity.cs#L343
+# See https://github.com/nmshd/backbone/blob/main/Modules/Devices/src/Devices.Domain/Entities/Identities/Identity.cs
 bb_id_status_map = {
     0: "Active",
     1: "ToBeDeleted",
     2: "Deleting",
 }
 
-# See https://github.com/nmshd/backbone/commit/5428a91ce549f996f616f0610a3a46d3de546a32#diff-fc8cc975a5ea3bd621080a4a1b318d0a0f2ce9b99ce283931ff0d84a357d4671
+# See https://github.com/nmshd/backbone/blob/main/Modules/Synchronization/src/Synchronization.Domain/Entities/Sync/ExternalEvent.cs
 bb_external_event_type_map = {
     0: "MessageReceived",
     1: "MessageDelivered",
@@ -56,11 +57,27 @@ bb_external_event_type_map = {
     8: "PeerDeleted",
 }
 
+# FIXME: Relevanten Backbone Sourcecode verlinken
 bb_datawallet_modification_collections = [
     "Tokens", "Notifications", "IdentityDeletionProcess",
     "Templates", "Settings", "Secrets", "Requests", "Relationships",
     "Messages", "Files", "Devices", "Attributes",
 ]
+
+# See https://github.com/nmshd/backbone/blob/main/Modules/Relationships/src/Relationships.Domain/Aggregates/Relationships/RelationshipAuditLogEntryReason.cs
+bb_relationship_audit_log_reason_map = {
+    0: "Creation",
+    1: "AcceptanceOfCreation",
+    2: "RejectionOfCreation",
+    3: "RevocationOfCreation",
+    4: "Termination",
+    5: "ReactivationRequested",
+    6: "AcceptanceOfReactivation",
+    7: "RejectionOfReactivation",
+    8: "RevocationOfReactivation",
+    9: "Decomposition",
+    10: "DecompositionDueToIdentityDeletion",
+}
 
 
 def is_app_client(client_id: str) -> bool:
