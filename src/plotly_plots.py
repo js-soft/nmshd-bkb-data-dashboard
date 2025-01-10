@@ -1307,7 +1307,7 @@ def timeline(
     - [time_col]: datetime64[ns]
 
     The order of events in the plot's legend and hoverinfo is determined by the
-    order of categories in the event column.
+    order of categories in the event column categorical.
     """
 
     def dates_without_year() -> list[str]:
