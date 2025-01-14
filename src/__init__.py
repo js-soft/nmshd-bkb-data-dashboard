@@ -47,14 +47,14 @@ bb_id_status_map = {
 # See https://github.com/nmshd/backbone/blob/main/Modules/Synchronization/src/Synchronization.Domain/Entities/Sync/ExternalEvent.cs
 bb_external_event_type_map = {
     0: "MessageReceived",
-    1: "MessageDelivered",
-    2: "RelationshipChangeCreated",
-    3: "RelationshipChangeCompleted",
-    4: "IdentityDeletionProcessStarted",
-    5: "IdentityDeletionProcessStatusChanged",
-    6: "PeerToBeDeleted",
-    7: "PeerDeletionCancelled",
-    8: "PeerDeleted",
+    10:"RelationshipStatusChanged",
+    12:"RelationshipReactivationRequested",
+    13:"RelationshipReactivationCompleted",
+    20:"IdentityDeletionProcessStarted",
+    21:"IdentityDeletionProcessStatusChanged",
+    22:"PeerToBeDeleted",
+    23:"PeerDeletionCancelled",
+    24:"PeerDeleted",
 }
 
 # FIXME: Relevanten Backbone Sourcecode verlinken
