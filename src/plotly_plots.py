@@ -1362,28 +1362,28 @@ def timeline(
     for row, year in enumerate(unique_years, 1):
         year_data = df[df["year"] == year]
 
-        for error_idx, error_code in enumerate(df[events_col].cat.categories):
-            df_sub = year_data[year_data[events_col] == error_code]
+        for event_idx, event in enumerate(df[events_col].cat.categories):
+            df_sub = year_data[year_data[events_col] == event]
             fig.add_trace(
                 go.Bar(
                     x=df_sub["date-noyear"],
                     y=df_sub["size"],
-                    name=error_code,
-                    legendgroup=error_code,
+                    name=event,
+                    legendgroup=event,
                     # Assign the same color to traces which represent the same
                     # event.
-                    marker={"color": default_color_seq[error_idx % len(default_color_seq)]},
+                    marker={"color": default_color_seq[event_idx % len(default_color_seq)]},
                     # Avoid duplicates in the legend by only showing the legend
                     # once for every distinct event. Unfortunately, legends are
                     # only updated for non-empty traces so that we have to
                     # manually track which events are already listed on the
                     # legend. See hack below.
-                    showlegend=error_code not in legendgroups,
+                    showlegend=event not in legendgroups,
                     # We want the legend items to appear in the order defined by
                     # the categorical, as opposed to the default, which lists them
                     # in the order of occurrence. This can be achieved by setting
                     # the rank of each legend item.
-                    legendrank=df[events_col].cat.categories.get_loc(error_code),
+                    legendrank=df[events_col].cat.categories.get_loc(event),
                 ),
                 row=row,
                 col=1,
@@ -1394,7 +1394,7 @@ def timeline(
             #       the legend manually. This is used above to avoid duplicate
             #       entries in the legend.
             if not df_sub.empty:
-                legendgroups.add(error_code)
+                legendgroups.add(event)
 
     fig.update_layout(
         barmode="stack",
