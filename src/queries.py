@@ -34,7 +34,7 @@ def num_identities_per_client(
            B.DisplayName as ClientDisplayName,
            count(A.Address) as NumIdentities
     FROM Devices.Identities A
-    RIGHT JOIN Devices.OpenIDdictApplications AS B ON B.ClientId = A.ClientId
+    LEFT JOIN Devices.OpenIDdictApplications AS B ON B.ClientId = A.ClientId
     GROUP BY B.ClientId, B.DisplayName
     """
     df = pd.read_sql_query(query, cnxn)
@@ -48,7 +48,7 @@ def num_identities_per_client(
         mask = ~df["ClientId"].map(is_test_client)
         if len(mask) > 0:
             df = df[mask]
-    df["ClientDisplayName"] = pd.Categorical(df["ClientDisplayName"], ordered=True)
+    df["ClientDisplayName"] = pd.Categorical(df["ClientDisplayName"].fillna("NULL"), ordered=True)
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df["ClientId"] = pd.Categorical(df["ClientId"], ordered=True)
 
@@ -73,7 +73,7 @@ def num_sent_messages_per_client(
            count(A.Id) AS NumMessages
     FROM Messages.Messages AS A
     RIGHT JOIN Devices.Identities AS B ON A.CreatedBy = B.Address
-    JOIN Devices.OpenIddictApplications as C ON B.ClientId = C.ClientId
+    LEFT JOIN Devices.OpenIddictApplications as C ON B.ClientId = C.ClientId
     GROUP BY B.ClientId, C.DisplayName
     """
     df = pd.read_sql_query(query, cnxn)
@@ -81,7 +81,7 @@ def num_sent_messages_per_client(
         mask = ~df["SenderClientId"].map(is_test_client)
         if len(mask) > 0:
             df = df[mask]
-    df["SenderClientDisplayName"] = pd.Categorical(df["SenderClientDisplayName"], ordered=True)
+    df["SenderClientDisplayName"] = pd.Categorical(df["SenderClientDisplayName"].fillna("NULL"), ordered=True)
     df["SenderClientType"] = pd.Categorical(df["SenderClientId"].map(bb_client_type_from_id), ordered=True)
     df["SenderClientId"] = pd.Categorical(df["SenderClientId"], ordered=True)
 
@@ -107,7 +107,7 @@ def num_received_messages_per_client(
     FROM Messages.RecipientInformation AS A
     RIGHT JOIN Devices.Identities AS B
     ON A.Address = B.Address
-    JOIN Devices.OpenIddictApplications C
+    LEFT JOIN Devices.OpenIddictApplications C
     ON C.ClientId = B.ClientId
     GROUP BY B.ClientId, C.DisplayName
     """
@@ -116,7 +116,7 @@ def num_received_messages_per_client(
         mask = ~df["RecipientClientId"].map(is_test_client)
         if len(mask) > 0:
             df = df[mask]
-    df["RecipientClientDisplayName"] = pd.Categorical(df["RecipientClientDisplayName"], ordered=True)
+    df["RecipientClientDisplayName"] = pd.Categorical(df["RecipientClientDisplayName"].fillna("NULL"), ordered=True)
     df["RecipientClientType"] = pd.Categorical(df["RecipientClientId"].map(bb_client_type_from_id), ordered=True)
     df["RecipientClientId"] = pd.Categorical(df["RecipientClientId"], ordered=True)
 

@@ -21,6 +21,11 @@ def make_rel_network(
     """
 
     # Set up network nodes including their client type.
+
+    # The ClientId column in Devices.Identities is not enforced as a foreign
+    # key to the ClientId column in Devices.OpenIddictApplications. As a
+    # result, a sided join is used to account for missing ClientIds in the
+    # latter column.
     query = """
         SELECT A.Address,
                A.ClientId,
