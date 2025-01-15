@@ -7,6 +7,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 import plotly.io as pio
+from plotly.subplots import make_subplots
 
 from src import client_types, int_bucket_label
 
@@ -473,42 +474,6 @@ def activity_plot(
     )
     fig.update_coloraxes(colorbar_title="Count")
     return fig
-
-
-def sync_errors(df: pd.DataFrame) -> go.Figure:
-    # FUTURE: Nach Errorcode aufspalten, Histogram gestapelt (Errorcodes), 1D-Bins
-    """
-    Accepts a dataframe with the following columns:
-    - CreatedAt: datetime64[ns]
-    - ErrorCode: category (ordered)
-    """
-
-    if len(df) == 0:
-        return no_data()
-
-    df = df.filter(["CreatedAt", "ErrorCode"])
-    df["CreatedAt"] = df["CreatedAt"].dt.normalize()
-    df = (
-        df.groupby(["CreatedAt", "ErrorCode"], as_index=False, observed=True)
-        .value_counts()
-        .rename(columns={"count": "NumErrors"})
-    )
-    p = px.scatter(
-        df,
-        x="CreatedAt",
-        y="NumErrors",
-        color="ErrorCode",
-        labels={
-            "NumErrors": "Number of Errors per Day",
-            "CreatedAt": "Error Timestamp",
-            "ErrorCode": "Error Code",
-        },
-        category_orders={
-            "ErrorCode": df["ErrorCode"].cat.categories,
-        },
-    )
-    p.update_layout()
-    return p
 
 
 def relationship_status_distribution(df: pd.DataFrame) -> go.Figure:
@@ -1325,6 +1290,160 @@ def rlt_validity_period(df: pd.DataFrame) -> go.Figure:
         showlegend=False,
     )
     return p
+
+
+def timeline(
+    df: pd.DataFrame,
+    events_col: str,
+    time_col: str,
+    log_y: bool,
+) -> go.Figure:
+    """
+    Produces a stacked bar chart of the number of daily occurrences of events,
+    split by year into vertically aligned subplots.
+
+    Accepts a dataframe with the following columns:
+    - [events_col]: category
+    - [time_col]: datetime64[ns]
+
+    The order of events in the plot's legend and hoverinfo is determined by the
+    order of categories in the event column categorical.
+    """
+
+    def dates_without_year() -> list[str]:
+        """
+        Returns all possible dates without year information in '%B %-d' format
+        (e.g. 'December 8' 'July 31'). Dates are returned in order and include
+        'February 29'.
+        """
+
+        lut = {
+            "January": 31,
+            "February": 29,
+            "March": 31,
+            "April": 30,
+            "May": 31,
+            "June": 30,
+            "July": 31,
+            "August": 31,
+            "September": 30,
+            "October": 31,
+            "November": 30,
+            "December": 31,
+        }
+        dates = []
+        for k, v in lut.items():
+            for day in range(1, v + 1):
+                date = f"{k} {day}"
+                dates.append(date)
+        return dates
+
+    if len(df) == 0:
+        return no_data()
+
+    df = df.filter([events_col, time_col])
+
+    df["year"] = df[time_col].dt.year
+    df["date-noyear"] = pd.Categorical(
+        df[time_col].dt.strftime("%B %-d"),
+        categories=dates_without_year(),
+    )
+    df = df.groupby([events_col, "date-noyear", "year"], as_index=False, observed=True).size()
+
+    unique_years = sorted(df["year"].unique())
+    fig = make_subplots(
+        rows=len(unique_years),
+        cols=1,
+        subplot_titles=[str(year) for year in unique_years],
+        vertical_spacing=0.1,
+    )
+
+    legendgroups = set()
+    for row, year in enumerate(unique_years, 1):
+        year_data = df[df["year"] == year]
+
+        for event_idx, event in enumerate(df[events_col].cat.categories):
+            df_sub = year_data[year_data[events_col] == event]
+            fig.add_trace(
+                go.Bar(
+                    x=df_sub["date-noyear"],
+                    y=df_sub["size"],
+                    name=event,
+                    legendgroup=event,
+                    # Assign the same color to traces which represent the same
+                    # event.
+                    marker={"color": default_color_seq[event_idx % len(default_color_seq)]},
+                    # Avoid duplicates in the legend by only showing the legend
+                    # once for every distinct event. Unfortunately, legends are
+                    # only updated for non-empty traces so that we have to
+                    # manually track which events are already listed on the
+                    # legend. See hack below.
+                    showlegend=event not in legendgroups,
+                    # We want the legend items to appear in the order defined by
+                    # the categorical, as opposed to the default, which lists them
+                    # in the order of occurrence. This can be achieved by setting
+                    # the rank of each legend item.
+                    legendrank=df[events_col].cat.categories.get_loc(event),
+                ),
+                row=row,
+                col=1,
+            )
+
+            # HACK: Items are only added to the legend if the data to be
+            #       plotted is not empty. We thus have to track the items in
+            #       the legend manually. This is used above to avoid duplicate
+            #       entries in the legend.
+            if not df_sub.empty:
+                legendgroups.add(event)
+
+    fig.update_layout(
+        barmode="stack",
+        height=300 * len(unique_years),
+        # Normal traceorder reduces the distance between items in the legend.
+        legend={"traceorder": "normal"},
+        # Show one shared hoverinfo for the whole bar, instead of having one
+        # per segment.
+        hovermode="x unified",
+        # Show unabbreviated hoverinfo. By default, lengthy legend items are
+        # ellipsized.
+        hoverlabel_namelength=-1,
+    )
+
+    if log_y:
+        fig.update_yaxes(type="log")
+
+    # Configure x-axis for categorical data and set its range to display the
+    # full year.
+    fig.update_xaxes(
+        type="category",
+        categoryorder="array",
+        categoryarray=df["date-noyear"].cat.categories,
+        range=[0, len(df["date-noyear"].cat.categories)],
+    )
+
+    # Add subtle highlight to the background of every month's segment in the
+    # plot, alterating hues between two shades of light gray.
+    rect_colors = ["rgba(200, 200, 200, 0.3)", "rgba(220, 220, 220, 0.3)"]
+    rect_bounds = []
+    for i, c in enumerate(df["date-noyear"].cat.categories):
+        if c.endswith(" 1"):
+            rect_bounds.append(i)
+    rect_bounds.append(len(df["date-noyear"].cat.categories))
+    for i, (a, b) in enumerate(zip(rect_bounds, rect_bounds[1:])):
+        fig.add_vrect(x0=a, x1=b, layer="below", fillcolor=rect_colors[i % 2], line_width=0)
+
+    # Add a label below the center of each month segment. We compute the exact
+    # position of the label and offset it by a small delta. This is to avoid
+    # plotly's default behavior of changing the hoverinfo alongside the
+    # tickmark text of data points. By slightly misaligning the position of the
+    # label we avoid matching the position of any discrete datapoint.
+    month_center = []
+    for a, b in zip(rect_bounds, rect_bounds[1:]):
+        month_center.append(a + (b - a) / 2 + 0.1)
+    ticktext = [v.split(" ")[0] for v in df["date-noyear"].cat.categories if v.endswith(" 1")]
+    fig.update_xaxes(tickvals=month_center, ticktext=ticktext)
+
+    return fig
 
 
 def ral_reasons(df: pd.DataFrame) -> go.Figure:

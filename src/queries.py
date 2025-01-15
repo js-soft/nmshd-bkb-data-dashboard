@@ -318,7 +318,7 @@ def sync_errors(
 ) -> pd.DataFrame:
     """
     Returns a dataframe with the following columns:
-    - ErrorCode: category (ordered)
+    - ErrorCode: category
     - CreatedAt: datetime64[ns]
     - ClientType: category (ordered)
     """
@@ -339,7 +339,7 @@ def sync_errors(
     df["ClientType"] = pd.Categorical(df["ClientId"].map(bb_client_type_from_id), ordered=True)
     df = df.drop(columns=["ClientId"])
     df["CreatedAt"] = df["CreatedAt"].astype("datetime64[ns]")
-    df["ErrorCode"] = pd.Categorical(df["ErrorCode"], ordered=True)
+    df["ErrorCode"] = pd.Categorical(df["ErrorCode"])
 
     return df
 
