@@ -14,7 +14,7 @@ def make_rel_network(
     """
     Returns graph of active relationships as well as isolated nodes.
     Nodes have the following metadata keys:
-        - 'ClientId'
+        - 'Client' (Concatenation of ClientId and DisplayName)
         - 'ClientType'
     Links have the following metadata keys:
         - 'NumMessages': Total number of messages exchanged between the peers.
@@ -22,20 +22,31 @@ def make_rel_network(
 
     # Set up network nodes including their client type.
     query = """
-        SELECT Address,
-               ClientId
-        FROM Devices.Identities
+        SELECT A.Address,
+               A.ClientId,
+               B.DisplayName
+        FROM Devices.Identities AS A
+        LEFT JOIN Devices.OpenIddictApplications AS B
+        ON A.ClientId = B.ClientId
     """
     df = pd.read_sql_query(query, cnxn)
     if hide_test_clients:
         df = df[~df["ClientId"].map(is_test_client)]
 
     df["ClientType"] = df["ClientId"].map(bb_client_type_from_id).astype("category")
+
+    # Concatenate DisplayName and ClientId, where both are available. Show
+    # ClientId as fallback if no DisplayName is available or if DisplayName
+    # matches ClientId.
+    df["Client"] = df["DisplayName"] + " (" + df["ClientId"] + ")"
+    cond = df["DisplayName"].isna() | (df["DisplayName"] == df["ClientId"])
+    df["Client"] = df["Client"].where(~cond, df["ClientId"])
+
     df = df.set_index("Address", verify_integrity=True)
 
     nodes = [
-        (idx, {"ClientType": ctype, "ClientId": cid})
-        for idx, ctype, cid in zip(df.index, df["ClientType"].values, df["ClientId"])
+        (idx, {"ClientType": ctype, "Client": c})
+        for idx, ctype, c in zip(df.index, df["ClientType"].values, df["Client"].values)
     ]
     net = nx.Graph()
     net.add_nodes_from(nodes)
