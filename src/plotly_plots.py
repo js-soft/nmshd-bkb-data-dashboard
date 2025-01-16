@@ -109,7 +109,7 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
     #       https://github.com/streamlit/streamlit/issues/5902 for a similar
     #       issue.
     df = df.sort_values(by=["NumIdentities"], ascending=False)
-    df["ClientPlotName"] = pd.Categorical(
+    df["Client"] = pd.Categorical(
             df["ClientDisplayName"].astype(object).where(
             (~df["ClientDisplayName"].isna()) & (df["ClientDisplayName"].str.len() != 0),
             df["ClientId"]
@@ -119,7 +119,7 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
 
     p = px.bar(
         df,
-        x="ClientPlotName",
+        x="Client",
         y="NumIdentities",
         color="ClientType",
         log_y=True,
@@ -134,10 +134,10 @@ def num_identities_per_client(df: pd.DataFrame) -> go.Figure:
             "ClientDisplayName": True,
             "ClientId": True,
             "ClientType": False,
-            "ClientPlotName": False
+            "Client": False
         },
         color_discrete_map=client_type_colmap,
-        category_orders={"ClientPlotName": df["ClientPlotName"]},
+        category_orders={"Client": df["Client"]},
     )
 
     return p
@@ -157,7 +157,7 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
 
     df = df.filter(["NumMessages", "SenderClientId", "SenderClientType", "SenderClientDisplayName"])
     df = df.sort_values(by=["NumMessages"], ascending=False)
-    df["SenderClientPlotName"] = pd.Categorical(
+    df["SenderClient"] = pd.Categorical(
             df["SenderClientDisplayName"].astype(object).where(
             (~df["SenderClientDisplayName"].isna()) & (df["SenderClientDisplayName"].str.len() != 0),
             df["SenderClientId"]
@@ -167,7 +167,7 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
 
     p = px.bar(
         df,
-        x="SenderClientPlotName",
+        x="SenderClient",
         y="NumMessages",
         color="SenderClientType",
         log_y=True,
@@ -182,10 +182,10 @@ def num_sent_messages_per_client(df: pd.DataFrame) -> go.Figure:
             "SenderClientId": True,
             "SenderClientType": False,
             "SenderClientDisplayName": True,
-            "SenderClientPlotName": False,
+            "SenderClient": False,
         },
         color_discrete_map=client_type_colmap,
-        category_orders={"SenderClientPlotName": df["SenderClientPlotName"]},
+        category_orders={"SenderClient": df["SenderClient"]},
     )
 
     return p
@@ -205,7 +205,7 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
 
     df = df.filter(["NumMessages", "RecipientClientId", "RecipientClientType", "RecipientClientDisplayName"])
     df = df.sort_values(by=["NumMessages"], ascending=False)
-    df["RecipientClientPlotName"] = pd.Categorical(
+    df["RecipientClient"] = pd.Categorical(
             df["RecipientClientDisplayName"].astype(object).where(
             (~df["RecipientClientDisplayName"].isna()) & (df["RecipientClientDisplayName"].str.len() != 0),
             df["RecipientClientId"]
@@ -215,7 +215,7 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
 
     p = px.bar(
         df,
-        x="RecipientClientPlotName",
+        x="RecipientClient",
         y="NumMessages",
         color="RecipientClientType",
         log_y=True,
@@ -230,10 +230,10 @@ def num_received_messages_per_client(df: pd.DataFrame) -> go.Figure:
             "RecipientClientId": True,
             "RecipientClientType": False,
             "RecipientClientDisplayName": True,
-            "RecipientClientPlotName": False,
+            "RecipientClient": False,
         },
         color_discrete_map=client_type_colmap,
-        category_orders={"RecipientClientPlotName": df["RecipientClientPlotName"]},
+        category_orders={"RecipientClient": df["RecipientClient"]},
     )
 
     return p

@@ -43,7 +43,7 @@
       function getNodeInfo(node) {
         return {
           "Address": node.Address,
-          "ClientId": node.ClientId,
+          "Client": node.Client,
           "ClientType": node.ClientType,
           "NumPeers": node.NumPeers
         };
@@ -52,10 +52,10 @@
       function getLinkInfo(link) {
         return {
           "Peer1Address": link.source.Address,
-          "Peer1ClientId": link.source.ClientId,
+          "Peer1Client": link.source.Client,
           "Peer1ClientType": link.source.ClientType,
           "Peer2Address": link.target.Address,
-          "Peer2ClientId": link.target.ClientId,
+          "Peer2Client": link.target.Client,
           "Peer2ClientType": link.target.ClientType,
           "NumMessages": link.NumMessages
         };
